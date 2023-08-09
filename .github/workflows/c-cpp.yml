@@ -2,25 +2,27 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+env:
+  RUN_UNIT_TESTS: 1
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: seanmiddleditch/gha-setup-ninja@master
-    - name: create build dir
-      run: mkdir build
-    - name: cmake configure
-      run: cmake -S . -G Ninja -B build/
-    - name: build
-      run: cmake --build build
-    - name: Test SubBitPackedArrayTest
-      run: build/SubBitPackedArrayTest
-    - name: Test SubBitPackedArrayNoExceptionsTest
-      run: build/SubBitPackedArrayNoExceptionsTest
+      - uses: actions/checkout@v3
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      - name: create build dir
+        run: mkdir build
+      - name: cmake configure
+        run: cmake -S . -G Ninja -B build/
+      - name: build
+        run: cmake --build build
+      - name: Test SubBitPackedArrayTest
+        run: build/SubBitPackedArrayTest
+      - name: Test SubBitPackedArrayNoExceptionsTest
+        run: build/SubBitPackedArrayNoExceptionsTest
