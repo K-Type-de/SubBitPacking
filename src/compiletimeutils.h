@@ -1,5 +1,8 @@
-#ifndef _POWERLUT_H_
-#define _POWERLUT_H_
+#ifndef _COMPILETIMEUTILS_H_
+#define _COMPILETIMEUTILS_H_
+
+#include <array>
+#include <cstdint>
 
 /**
  * C++11 compatible way to calculate a lookup table of various powers at compile time.
@@ -17,9 +20,6 @@
  *                          }()
  *                       };
  **/
-
-#include <array>
-#include <cstdint>
 
 template <uint16_t base>
 constexpr uint32_t pow(uint8_t n)
@@ -51,4 +51,26 @@ constexpr auto generate_pow_lut(Generator&& generator_function)
       std::forward<Generator>(generator_function));
 }
 
-#endif  //_POWERLUT_H_
+/**
+ * Returns the number of states you can pack into a 32-bit word
+ */
+static constexpr uint8_t NumberOfStatesPer4ByteWord(uint16_t num_states)
+{
+  return num_states <= 2      ? 32
+         : num_states == 3    ? 20
+         : num_states == 4    ? 16
+         : num_states == 5    ? 13
+         : num_states == 6    ? 12
+         : num_states == 7    ? 11
+         : num_states <= 9    ? 10
+         : num_states <= 11   ? 9
+         : num_states <= 16   ? 8
+         : num_states <= 23   ? 7
+         : num_states <= 40   ? 6
+         : num_states <= 84   ? 5
+         : num_states <= 256  ? 4
+         : num_states <= 1625 ? 3
+                              : 2;
+}
+
+#endif  //_COMPILETIMEUTILS_H_

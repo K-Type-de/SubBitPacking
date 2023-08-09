@@ -8,27 +8,10 @@
 #include <cstdint>
 #include <limits>
 
-#include "powerlut.h"
+#include "compiletimeutils.h"
 
 namespace kt
 {
-
-static constexpr uint8_t NumberOfStatesPer4ByteWord(uint16_t num_states)
-{
-  uint8_t power = 1;
-  uint64_t value = num_states;
-  const uint64_t max_32_bit_values =
-      static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) + 1;
-
-  while (value <= max_32_bit_values)
-  {
-    value *= num_states;
-    power++;
-  }
-
-  return power - 1;
-}
-
 class SubBitPackedArrayEntry
 {
 private:
