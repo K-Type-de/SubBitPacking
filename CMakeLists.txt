@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(SubBitPackedArrayLib)
 
-include_directories(src)
-
 if(DEFINED ENV{RUN_UNIT_TESTS})
   message(STATUS "Building Unit Tests")
 
@@ -21,13 +19,13 @@ if(DEFINED ENV{RUN_UNIT_TESTS})
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
 
+  include_directories(src)
+
   enable_testing()
 
   add_executable(
     SubBitPackedArrayTest
     test/subbitpackedarray_test.cpp
-    src/subbitpackedarray.cpp
-    src/subbitpackedarray.h
   )
 
   target_link_libraries(
@@ -38,8 +36,6 @@ if(DEFINED ENV{RUN_UNIT_TESTS})
   add_executable(
     SubBitPackedArrayNoExceptionsTest
     test/subbitpackedarraynoexceptions_test.cpp
-    src/subbitpackedarray.cpp
-    src/subbitpackedarray.h
   )
 
   target_link_libraries(
@@ -53,9 +49,9 @@ if(DEFINED ENV{RUN_UNIT_TESTS})
 
 else()
 
-message(STATUS "Building Library")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_library(SubBitPackedArray src/subbitpackedarray.cpp src/subbitpackedarray.h src/subbitpackedarrayiterator.h src/compiletimeutils.h)
+add_library(SubBitPackedArray INTERFACE)
+target_include_directories(SubBitPackedArray INTERFACE src)
 
 endif()

@@ -18,10 +18,23 @@ private:
   uint32_t data_;
 
 public:
-  SubBitPackedArrayEntry();
-  uint16_t getState(uint32_t divisor, uint16_t modulo) const;
-  void setState(uint32_t power, uint16_t modulo, uint16_t state);
-  uint32_t getData() const;
+  SubBitPackedArrayEntry() : data_{0} {}
+
+  inline uint16_t getState(uint32_t divisor, uint16_t modulo) const
+  {
+    return this->data_ / divisor % modulo;
+  }
+
+  inline void setState(uint32_t power, uint16_t modulo, uint16_t state)
+  {
+    uint8_t current_state = this->getState(power, modulo);
+    this->data_ = this->data_ - (current_state * power) + (state * power);
+  }
+
+  inline uint32_t getData() const
+  {
+    return this->data_;
+  }
 };
 
 template <uint16_t num_states, std::size_t num_values>
