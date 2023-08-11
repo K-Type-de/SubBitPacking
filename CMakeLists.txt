@@ -1,5 +1,5 @@
 if(COMMAND idf_component_register)
-#If the project is a submodule of an ESP-IDF project, register it as component
+# If the project is a submodule of an ESP-IDF project, register it as component
 idf_component_register(INCLUDE_DIRS "src")
 return()
 endif()
@@ -56,8 +56,6 @@ if(DEFINED ENV{SUBBITPACKEDARRAY_UNITTESTS})
 
 else()
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(SubBitPackedArray INTERFACE)
 target_include_directories(SubBitPackedArray INTERFACE src)
 
