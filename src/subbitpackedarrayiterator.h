@@ -13,7 +13,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
 
   value_type operator*() const
   {
-    return ptr_->entries_[index_ / kStatesPer4ByteWord].getState(
+    return ptr_->entries_[index_ / kStatesPer4ByteWord].get(
         kPowerLookupTable[index_ % kStatesPer4ByteWord], num_states);
   }
   value_type operator->() const

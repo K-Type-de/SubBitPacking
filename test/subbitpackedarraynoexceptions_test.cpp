@@ -47,7 +47,7 @@ TYPED_TEST(SubBitPackedArrayNoExceptionsTest, NoExceptionTest)
     bool caught = false;
     try
     {
-      array.getState(i);
+      array.get(i);
     }
     catch (std::out_of_range ex)
     {

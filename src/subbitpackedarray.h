@@ -20,14 +20,14 @@ private:
 public:
   SubBitPackedArrayEntry() : data_{0} {}
 
-  inline uint16_t getState(uint32_t divisor, uint16_t modulo) const
+  inline uint16_t get(uint32_t divisor, uint16_t modulo) const
   {
     return this->data_ / divisor % modulo;
   }
 
-  inline void setState(uint32_t power, uint16_t modulo, uint16_t state)
+  inline void set(uint32_t power, uint16_t modulo, uint16_t state)
   {
-    uint8_t current_state = this->getState(power, modulo);
+    uint8_t current_state = this->get(power, modulo);
     this->data_ = this->data_ - (current_state * power) + (state * power);
   }
 
@@ -72,7 +72,7 @@ public:
 
   SubBitPackedArray() {}
 
-  void setState(std::size_t value_index, uint16_t state)
+  void set(std::size_t value_index, uint16_t state)
   {
 #ifndef SUBBITPACKEDARRAY_NO_EXCEPTIONS
     if (value_index >= num_values)
@@ -82,12 +82,11 @@ public:
 #endif  // SUBBITPACKEDARRAY_NO_EXCEPTIONS
     std::size_t entry_index = value_index / kStatesPer4ByteWord;
 
-    this->entries_[entry_index].setState(
-        this->kPowerLookupTable[value_index % kStatesPer4ByteWord], num_states,
-        state % num_states);
+    this->entries_[entry_index].set(this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
+                                    num_states, state % num_states);
   }
 
-  uint16_t getState(std::size_t value_index) const
+  uint16_t get(std::size_t value_index) const
   {
 #ifndef SUBBITPACKEDARRAY_NO_EXCEPTIONS
     if (value_index >= num_values)
@@ -97,7 +96,7 @@ public:
 #endif  // SUBBITPACKEDARRAY_NO_EXCEPTIONS
 
     std::size_t entry_index = value_index / kStatesPer4ByteWord;
-    return this->entries_[entry_index].getState(
+    return this->entries_[entry_index].get(
         this->kPowerLookupTable[value_index % kStatesPer4ByteWord], num_states);
   }
 

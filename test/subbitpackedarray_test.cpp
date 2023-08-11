@@ -100,12 +100,12 @@ TYPED_TEST(SubBitPackedArrayTest, WriteReadTest)
 
   for (size_t i = 0; i < values; ++i)
   {
-    array.setState(i, i % num_states);
+    array.set(i, i % num_states);
   }
 
   for (size_t i = 0; i < values; ++i)
   {
-    ASSERT_EQ(array.getState(i), i % num_states);
+    ASSERT_EQ(array.get(i), i % num_states);
   }
 }
 
@@ -119,7 +119,7 @@ TYPED_TEST(SubBitPackedArrayTest, WriteReadIteratorTest)
 
   for (size_t i = 0; i < values; ++i)
   {
-    array.setState(i, i % num_states);
+    array.set(i, i % num_states);
   }
 
   size_t count = 0;
@@ -143,7 +143,7 @@ TYPED_TEST(SubBitPackedArrayTest, ExceptionTest)
     bool caught = false;
     try
     {
-      array.getState(i);
+      array.get(i);
     }
     catch (std::out_of_range ex)
     {
