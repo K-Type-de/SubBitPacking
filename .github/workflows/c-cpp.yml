@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 env:
-  RUN_UNIT_TESTS: 1
+  SUBBITPACKEDARRAY_UNITTESTS: 1
 
 jobs:
   build:

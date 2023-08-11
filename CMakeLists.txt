@@ -1,7 +1,14 @@
+if(COMMAND idf_component_register)
+#If the project is a submodule of an ESP-IDF project, register it as component
+idf_component_register(INCLUDE_DIRS "src")
+return()
+endif()
+
+
 cmake_minimum_required(VERSION 3.14)
 project(SubBitPackedArrayLib)
 
-if(DEFINED ENV{RUN_UNIT_TESTS})
+if(DEFINED ENV{SUBBITPACKEDARRAY_UNITTESTS})
   message(STATUS "Building Unit Tests")
 
   # GoogleTest requires at least C++14
