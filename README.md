@@ -38,24 +38,30 @@ On the other hand, you can fit more values of states that can be tightly packed 
         First,
         Second,
         Third,
-    }
+    };
 
     uint8_t a_lot_of_states[10000];
 ```
 
-A single `MyState` value can be stored in an 8-bit variable.
+`sizeof(MyState)` will give you 4 byte
 
-`sizeof(uint8_t)` will give you 1 byte
+A single `MyState` value can be stored in an 8-bit variable so let's specify the underlying type:
+
+```c++
+    enum class MyState: uint8_t { ... }
+```
+
+`sizeof(MyState)` will now give you 1 byte
 
 `sizeof(a_lot_of_states)` will then give you 10000
 
-In order to store 10000 values we are using 10000 bytes which could store up to 2^(10000 * 8) binary states.
+In order to store 10000 values we are using 10000 bytes or 80000 bits which could store up to $$2^{(10000 * 8)} = 2^{80000} \approx 10^{24000} $$ binary states  - but we only need $$3^{10000} \approx 10^{4771} $$ states.
 
 This naive method is a huge waste of memory.
 
 ### Bitwise Packing
 
-To store three states we need 2 bits.
+To store three states, we need a maximum of 2 bits.
 
 So to store 10000 states we would only need 20000 bits or 2500 bytes.
 
@@ -63,7 +69,7 @@ We can already save 75% of the storage (10000 vs. 2500).
 
 ### This Library: Sub-Bit Packing
 
-As you may have already figured out, when using 2 bits to represent 3 states there is one extra state too many:
+As you may have already figured out, when using 2 bits to represent 3 states, there is one extra state:
 
 `00` First
 
