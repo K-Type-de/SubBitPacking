@@ -1,5 +1,7 @@
 # Sub-Bit Packed Array
 
+<img src="images/SubBitPackedArray.svg">
+
 ## Table Of Contents
 
 - [Sub-Bit Packed Array](#sub-bit-packed-array)
