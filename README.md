@@ -141,13 +141,13 @@ Or on the heap:
 
     size_t pixel = ...
 
-    displayBuffer->setState(pixel, static_cast<uint16_t>(Color::RED));
+    displayBuffer->set(pixel, static_cast<uint16_t>(Color::RED));
 ```
 
 ### Retrieve Values
 
 ```c++
-    Color color = static_cast<Color>(displayBuffer->getState(pixel));
+    Color color = static_cast<Color>(displayBuffer->get(pixel));
 ```
 
 ## Optimization
