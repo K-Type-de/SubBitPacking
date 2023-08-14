@@ -1,5 +1,5 @@
-#ifndef _SUBBITPACKEDARRAY_H_
-#define _SUBBITPACKEDARRAY_H_
+#ifndef _KT_SUBBITPACKEDARRAY_H_
+#define _KT_SUBBITPACKEDARRAY_H_
 
 #ifndef SUBBITPACKEDARRAY_NO_EXCEPTIONS
 #include <stdexcept>
@@ -133,4 +133,4 @@ constexpr std::array<uint32_t, SubBitPackedArray<num_states, num_values>::kState
 
 }  // namespace kt
 
-#endif  //_SUBBITPACKEDARRAY_H_
+#endif  //_KT_SUBBITPACKEDARRAY_H_
