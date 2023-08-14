@@ -9,17 +9,17 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
   using iterator_category = std::forward_iterator_tag;
   using value_type = uint16_t;
 
-  Iterator(SubBitPackedArray* ptr, uint32_t value_index)
-      : ptr_{ptr},
+  Iterator(SubBitPackedArray& instance, uint32_t value_index)
+      : instance_{instance},
         entry_index_{value_index / kStatesPer4ByteWord},
         chunk_value_index_{static_cast<uint8_t>(value_index % kStatesPer4ByteWord)}
   {
-    if (entry_index_ >= ptr_->getEntrySize())
+    if (entry_index_ >= instance_.getEntrySize())
     {
       return;
     }
 
-    chunk_ = ptr_->entries_[entry_index_].getData();
+    chunk_ = instance_.entries_[entry_index_].getData();
 
     for (size_t i = 0; i < chunk_value_index_; ++i)
     {
@@ -42,7 +42,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
     {
       entry_index_++;
       chunk_value_index_ = 0;
-      chunk_ = ptr_->entries_[entry_index_].getData();
+      chunk_ = instance_.entries_[entry_index_].getData();
     }
     else
     {
@@ -58,7 +58,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
   }
   friend bool operator==(const Iterator& a, const Iterator& b)
   {
-    return a.ptr_ == b.ptr_ && a.entry_index_ == b.entry_index_ &&
+    return &a.instance_ == &b.instance_ && a.entry_index_ == b.entry_index_ &&
            a.chunk_value_index_ == b.chunk_value_index_;
   }
 
@@ -68,7 +68,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
   }
 
 private:
-  SubBitPackedArray* ptr_;
+  SubBitPackedArray& instance_;
   uint32_t entry_index_;
   uint32_t chunk_;
   uint8_t chunk_value_index_;

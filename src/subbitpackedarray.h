@@ -62,11 +62,11 @@ public:
   struct Iterator;
   Iterator begin()
   {
-    return Iterator(this, 0);
+    return Iterator(*this, 0);
   }
   Iterator end()
   {
-    return Iterator(this, num_values);
+    return Iterator(*this, num_values);
   }
 #endif  // SUBBITPACKEDARRAY_NO_ITERATOR
 
