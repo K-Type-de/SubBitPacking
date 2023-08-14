@@ -1,5 +1,5 @@
-#ifndef _SUBBITPACKEDARRAY_ITERATOR_H_
-#define _SUBBITPACKEDARRAY_ITERATOR_H_
+#ifndef _KT_SUBBITPACKEDARRAY_ITERATOR_H_
+#define _KT_SUBBITPACKEDARRAY_ITERATOR_H_
 
 #include <cstdint>
 
@@ -74,4 +74,4 @@ private:
   uint8_t chunk_value_index_;
 };
 
-#endif  // _SUBBITPACKEDARRAY_ITERATOR_H_
+#endif  // _KT_SUBBITPACKEDARRAY_ITERATOR_H_

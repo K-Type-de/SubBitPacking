@@ -1,5 +1,5 @@
-#ifndef _COMPILETIMEUTILS_H_
-#define _COMPILETIMEUTILS_H_
+#ifndef _KT_COMPILETIMEUTILS_H_
+#define _KT_COMPILETIMEUTILS_H_
 
 #include <array>
 #include <cstdint>
@@ -21,6 +21,8 @@
  *                       };
  **/
 
+namespace kt
+{
 template <uint16_t base>
 constexpr uint32_t pow(uint8_t n)
 {
@@ -72,5 +74,5 @@ static constexpr uint8_t NumberOfStatesPer4ByteWord(uint16_t num_states)
          : num_states <= 1625 ? 3
                               : 2;
 }
-
-#endif  //_COMPILETIMEUTILS_H_
+}  // namespace kt
+#endif  //_KT_COMPILETIMEUTILS_H_
