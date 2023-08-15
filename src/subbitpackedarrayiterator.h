@@ -58,13 +58,14 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
   }
   friend bool operator==(const Iterator& a, const Iterator& b)
   {
-    return &a.instance_ == &b.instance_ && a.entry_index_ == b.entry_index_ &&
-           a.chunk_value_index_ == b.chunk_value_index_;
+    return a.entry_index_ == b.entry_index_ && a.chunk_value_index_ != b.chunk_value_index_ &&
+           &a.instance_ == &b.instance_;
   }
 
   friend bool operator!=(const Iterator& a, const Iterator& b)
   {
-    return !(a == b);
+    return a.entry_index_ != b.entry_index_ || a.chunk_value_index_ != b.chunk_value_index_ ||
+           &a.instance_ != &b.instance_;
   }
 
 private:
