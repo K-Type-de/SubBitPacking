@@ -27,7 +27,7 @@ public:
 
   inline void set(uint32_t power, uint16_t modulo, uint16_t state)
   {
-    uint8_t current_state = this->get(power, modulo);
+    uint16_t current_state = this->get(power, modulo);
     this->data_ = this->data_ - (current_state * power) + (state * power);
   }
 

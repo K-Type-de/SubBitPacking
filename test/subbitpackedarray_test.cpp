@@ -129,6 +129,34 @@ TYPED_TEST(SubBitPackedArrayTest, WriteReadIteratorTest)
   }
 }
 
+// Iterator random start test
+TYPED_TEST(SubBitPackedArrayTest, IteratorRandTest)
+{
+  // Tests correct iterator implementation if the iterator does not start at the beginning
+  static constexpr auto num_states = TypeParam::value;
+  static constexpr uint32_t values = 100;
+  uint32_t start_index = 51;
+
+  SubBitPackedArray<num_states, values> array{};
+
+  for (size_t i = 0; i < values; ++i)
+  {
+    array.set(i, i % num_states);
+  }
+
+  typename SubBitPackedArray<num_states, values>::Iterator iterator{array, start_index};
+
+  while (iterator != array.end())
+  {
+    uint16_t state = *iterator;
+
+    ASSERT_EQ(state, start_index % num_states);
+    ASSERT_EQ(state, array.get(start_index));
+    start_index++;
+    iterator++;
+  }
+}
+
 // Exception test
 TYPED_TEST(SubBitPackedArrayTest, ExceptionTest)
 {
