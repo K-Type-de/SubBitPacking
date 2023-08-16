@@ -19,6 +19,7 @@
     - [SubBitPackedArray](#subbitpackedarray)
     - [SuperBitPackedArray](#superbitpackedarray)
   - [Comparing Arrays](#comparing-arrays)
+  - [SubBitPacked Structs](#subbitpacked-structs)
   - [How To Use](#how-to-use)
     - [Initialization](#initialization)
     - [Set Values](#set-values)
@@ -173,6 +174,39 @@ The following results stem from running [Code](https://gist.github.com/Christian
 | SubBitPackedArray | 57144 | 5955 |
 | SuperBitPackedArray | 51788  | 10640 |
 
+## SubBitPacked Structs
+
+
+Arrays with $n$ possible states and a size of $i$ will be computed like this:
+$$ \sum{a_i * n^{i}} $$
+
+```c++
+PackedStruct myStruct<3,5,9>;
+
+myStruct.a1 = 2;
+myStruct.a2 = 4;
+myStruct.a3 = 7;
+```
+
+
+Power for each field:
+
+
+$$ p_1 = 1 $$
+$$ p_n = p_{n-1} * a_{n-1} $$
+
+$$ p_1 = 1 $$
+$$ p_2 = 3 $$
+$$ p_3 = 15 $$
+
+
+
+
+
+Sum of value:
+$$ \sum{a_n * {p_n}} $$
+
+
 ## How To Use
 
 ### Initialization
@@ -223,3 +257,4 @@ Or on the heap:
 ## Exceptions
 
 By default this library uses no exceptions. However, you can enable exceptions by setting the compile flag `KT_PACKEDARRAY_ENABLE_EXCEPTIONS`. This activates array boundary checks but will also slow down array accesses.
+

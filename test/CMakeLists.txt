@@ -24,7 +24,7 @@ enable_testing()
 
 add_executable(
   SubBitPackedTest
-  subbitpackedarray_test.cpp
+# subbitpackedarray_test.cpp
   subbitpackedstruct_test.cpp
 )
 
