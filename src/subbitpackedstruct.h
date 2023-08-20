@@ -3,30 +3,85 @@
 
 #include <cstdint>
 
-#include "compiletimeutils.h"
+#include "utils/compiletime.h"
 
 namespace kt
 {
 
+// template <typename... Ns>
+// constexpr auto StructPower(Ns... ns)
+// {
+//   std::array<uint32_t, sizeof...(Ns)> N = {ns...};
+//   std::array<uint32_t, sizeof...(Ns)> P = {ns...};
+
+//   P[0] = 1;
+
+//   for (std::size_t i = 1; i < P.size(); ++i)
+//   {
+//     P[i] = N[i - 1] * P[i - 1];
+//   }
+
+//   return P;
+// }
+
+// template <typename N_1, typename... Ns>
+// constexpr auto GenerateP(const uint32_t p_1, N_1&& n_1, Ns&&... ns)
+// {
+//  return { p_1 * n_1,  {GenerateP(p_1 * n_1, ns...) }};
+// }
+
+// template <typename N_1, typename N> // ignore the last element since it's not needed
+// constexpr std::array<uint32_t, 1> StructPower2(const uint32_t   p_1, N_1 n_1)
+// {
+//  return { p_1 * n_1 };
+// }
+
+// template <typename N>
+// constexpr auto GenerateP(uint32_t p_1)
+// {
+//  return {  };
+// }
+
+// template <typename... Ns>
+// constexpr std::array<uint32_t, sizeof...(Ns)> StructPower(Ns&&... ns)
+// {
+//   return {1, {GenerateP(1, ns...)}};
+// }
+
+template <typename N1 = uint32_t, typename N2 = uint32_t, typename N3 = uint32_t,
+          typename N4 = uint32_t>
+constexpr std::array<uint32_t, 4> StaticStructPower(uint32_t n1, uint32_t n2, uint32_t n3,
+                                                    uint32_t n4)
+{
+  return {1, n1, n1 * n2, n1 * n2 * n3};
+}
+
+template <typename... Ns>
+constexpr std::array<uint32_t, sizeof...(Ns)> StructPower(Ns&&... ns)
+{
+  return {};
+}
+
 template <uint16_t N1, uint16_t N2, uint16_t... Ns>
 class TStruct
 {
-  public:
+public:
   static constexpr std::size_t kNumFields = sizeof...(Ns) + 2;
-
-  static constexpr std::array<uint32_t, kNumFields> kNumStates = { N1, N2, Ns... };
-  static constexpr std::array<uint32_t, kNumFields> kStatePowers = { 1, N1, N1 * N2, Ns... }; // TODO:
-
+  static constexpr std::array<uint32_t, kNumFields> kNumStates = {N1, N2, Ns...};
+  static constexpr std::array<uint32_t, kNumFields> kStatePowers = StructPower(N1, N2, Ns...);
 };
-
 
 // C++11 linker madness
 template <uint16_t N1, uint16_t N2, uint16_t... Ns>
 constexpr std::size_t TStruct<N1, N2, Ns...>::kNumFields;
 
 template <uint16_t N1, uint16_t N2, uint16_t... Ns>
-constexpr std::array<uint32_t, TStruct<N1, N2, Ns...>::kNumFields> TStruct<N1, N2, Ns...>::kNumStates;
+constexpr std::array<uint32_t, TStruct<N1, N2, Ns...>::kNumFields>
+    TStruct<N1, N2, Ns...>::kNumStates;
 
+template <uint16_t N1, uint16_t N2, uint16_t... Ns>
+constexpr std::array<uint32_t, TStruct<N1, N2, Ns...>::kNumFields>
+    TStruct<N1, N2, Ns...>::kStatePowers;
 
 class SubBitPackedStruct
 {

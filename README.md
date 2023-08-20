@@ -257,4 +257,3 @@ Or on the heap:
 ## Exceptions
 
 By default this library uses no exceptions. However, you can enable exceptions by setting the compile flag `KT_PACKEDARRAY_ENABLE_EXCEPTIONS`. This activates array boundary checks but will also slow down array accesses.
-

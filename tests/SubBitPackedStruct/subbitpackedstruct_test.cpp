@@ -18,6 +18,11 @@ TEST(SubBitStructTest, SyntaxCheck)
   EXPECT_EQ(9, tstruct.kNumStates[3]);
 
 
+  EXPECT_EQ(1, tstruct.kStatePowers[0]);
+  EXPECT_EQ(3, tstruct.kStatePowers[1]);
+  EXPECT_EQ(15, tstruct.kStatePowers[2]);
+  EXPECT_EQ(105, tstruct.kStatePowers[3]);
+
 
   class MyStruct : public SubBitPackedStruct
   {
