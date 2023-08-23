@@ -24,18 +24,12 @@ constexpr uint32_t Pow(uint8_t exponent)
 template <uint16_t base>
 constexpr uint32_t VariadicStatePow(uint8_t exponent)
 {
-  return (exponent == 0) ? 1 : base * VariadicStatePow<base>(exponent - 1);
-}
-
-template <uint16_t base, uint16_t extra>
-constexpr uint32_t VariadicStatePow(uint8_t exponent)
-{
-  return (exponent == 0) ? 1 : base * VariadicStatePow<extra>(exponent - 1);
+  return 1;
 }
 
 template <uint16_t base, uint16_t... extra>
 constexpr auto VariadicStatePow(uint8_t exponent) ->
-    typename std::enable_if<sizeof...(extra) != 0 && sizeof...(extra) != 1, uint32_t>::type
+    typename std::enable_if<sizeof...(extra) != 0, uint32_t>::type
 {
   return (exponent == 0) ? 1 : base * VariadicStatePow<extra...>(exponent - 1);
 }
