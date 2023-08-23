@@ -23,10 +23,12 @@
 
 namespace kt
 {
-template <uint16_t base>
-constexpr uint32_t pow(uint8_t n)
+namespace CompileTime
 {
-  return (n == 0) ? 1 : (base * pow<base>(n - 1));
+template <uint16_t base>
+constexpr uint32_t Pow(uint8_t exponent)
+{
+  return (exponent == 0) ? 1 : (base * Pow<base>(exponent - 1));
 }
 
 template <std::size_t Size, typename T, typename Generator, typename... Values>
@@ -46,7 +48,7 @@ constexpr auto lut(Generator&& generator_function, Values... values) ->
 }
 
 template <std::size_t Size, typename Generator>
-constexpr auto generate_pow_lut(Generator&& generator_function)
+constexpr auto GeneratePowLut(Generator&& generator_function)
     -> std::array<decltype(generator_function(uint8_t{0})), Size>
 {
   return lut<Size, decltype(generator_function(uint8_t{0}))>(
@@ -74,5 +76,46 @@ static constexpr uint8_t NumberOfStatesPer4ByteWord(uint16_t num_states)
          : num_states <= 1625 ? 3
                               : 2;
 }
+
+/**
+ * Returns the number of bits needed to store a value
+ * ...0001 => 1
+ * ...0010 => 2
+ * ...0011 => 2
+ * ...0110 => 3
+ * [...]
+ */
+static constexpr uint8_t NumberOfBitsPerValue(uint16_t value, uint8_t shift = 0)
+{
+  return (0x1 << shift) > value ? shift : NumberOfBitsPerValue(value, shift + 1);
+}
+
+/**
+ * Returns the bitmask needed to mask the value
+ * ...0001 => 1
+ * ...0010 => 11
+ * ...0011 => 11
+ * ...0110 => 111
+ * [...]
+ */
+static constexpr uint16_t BitMaskForValue(uint16_t value, uint16_t mask = 0x1)
+{
+  return (value & mask) == value ? mask : BitMaskForValue(value, (mask << 1) | 0x1);
+}
+
+/**
+ * Recursively calculates the number of unused upper bits of a value:
+ * 01100110... => 1
+ * 00001010... => 4
+ * [...]
+ */
+template <typename T>
+static constexpr uint8_t NumberOfUnusedUpperBits(T value, int8_t shift = sizeof(T) * 8 - 1)
+{
+  return shift < 0                       ? 0
+         : ((value >> shift) & 0x1) == 0 ? 1 + NumberOfUnusedUpperBits(value, shift - 1)
+                                         : 0;
+}
+}  // namespace CompileTime
 }  // namespace kt
 #endif  //_KT_COMPILETIMEUTILS_H_

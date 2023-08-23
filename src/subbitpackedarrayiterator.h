@@ -19,7 +19,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
       return;
     }
 
-    chunk_ = instance_.entries_[entry_index_].getData();
+    chunk_ = instance_.entries_[entry_index_];
 
     for (size_t i = 0; i < chunk_value_index_; ++i)
     {
@@ -42,7 +42,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
     {
       entry_index_++;
       chunk_value_index_ = 0;
-      chunk_ = instance_.entries_[entry_index_].getData();
+      chunk_ = instance_.entries_[entry_index_];
     }
     else
     {
@@ -58,7 +58,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
   }
   friend bool operator==(const Iterator& a, const Iterator& b)
   {
-    return a.entry_index_ == b.entry_index_ && a.chunk_value_index_ != b.chunk_value_index_ &&
+    return a.entry_index_ == b.entry_index_ && a.chunk_value_index_ == b.chunk_value_index_ &&
            &a.instance_ == &b.instance_;
   }
 

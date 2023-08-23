@@ -13,13 +13,37 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: seanmiddleditch/gha-setup-ninja@master
+
+      # BitPackedArray Tests
       - name: create build dir
         run: mkdir build
       - name: cmake configure
-        run: cmake -S test -G Ninja -B build/
-      - name: build
+        run: cmake -S tests/BitPackedArray -G Ninja -B build/
+      - name: build BitPackedArray
+        run: cmake --build build
+      - name: Test BitPackedArrayTest
+        run: build/BitPackedArrayTest
+
+      # SubBitPackedArray Tests
+      - name: clear build dir
+        run: rm -rf build/*
+      - name: cmake configure
+        run: cmake -S tests/SubBitPackedArray -G Ninja -B build/
+      - name: build SubBitPackedArrayTest
         run: cmake --build build
       - name: Test SubBitPackedArrayTest
         run: build/SubBitPackedArrayTest
       - name: Test SubBitPackedArrayNoExceptionsTest
         run: build/SubBitPackedArrayNoExceptionsTest
+
+      # SuperBitPackedArray Tests
+      - name: clear build dir
+        run: rm -rf build/*
+      - name: cmake configure
+        run: cmake -S tests/SuperBitPackedArray -G Ninja -B build/
+      - name: build SuperBitPackedArrayTest
+        run: cmake --build build
+      - name: Test SuperBitPackedArrayTest
+        run: build/SuperBitPackedArrayTest
+      - name: Test SuperBitPackedArrayNoExceptionsTest
+        run: build/SuperBitPackedArrayNoExceptionsTest
