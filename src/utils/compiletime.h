@@ -4,33 +4,48 @@
 #include <array>
 #include <cstdint>
 
-/**
- * C++11 compatible way to calculate a lookup table of various powers at compile time.
- * A more readable version for C++17 would look something like this:
- *
- *  constexpr auto PowerLookupTable{[]() constexpr
- *                       {
- *                          std::array<uint32_t, length> result{};
- *                          result[0] = 1;
- *                          for (int i = 1; i < kStatesPer4ByteWord; ++i)
- *                          {
- *                              result[i] = result[i - 1] * base;
- *                          }
- *                          return result;
- *                          }()
- *                       };
- **/
-
 namespace kt
 {
 namespace CompileTime
 {
+/*
+ * Generator function to calculate normal powers
+ */
 template <uint16_t base>
 constexpr uint32_t Pow(uint8_t exponent)
 {
   return (exponent == 0) ? 1 : (base * Pow<base>(exponent - 1));
 }
+/*****************************************************************************************/
 
+/*
+ * Generator functions to calculate powers with shifting base
+ */
+template <uint16_t base>
+constexpr uint32_t VariadicStatePow(uint8_t exponent)
+{
+  return (exponent == 0) ? 1 : base * VariadicStatePow<base>(exponent - 1);
+}
+
+template <uint16_t base, uint16_t extra>
+constexpr uint32_t VariadicStatePow(uint8_t exponent)
+{
+  return (exponent == 0) ? 1 : base * VariadicStatePow<extra>(exponent - 1);
+}
+
+template <uint16_t base, uint16_t... extra>
+constexpr auto VariadicStatePow(uint8_t exponent) ->
+    typename std::enable_if<sizeof...(extra) != 0 && sizeof...(extra) != 1, uint32_t>::type
+{
+  return (exponent == 0) ? 1 : base * VariadicStatePow<extra...>(exponent - 1);
+}
+
+/*****************************************************************************************/
+
+/*
+ * Recursive Lookup table generator (C++11 compatible)
+ * Uses above generator functions
+ */
 template <std::size_t Size, typename T, typename Generator, typename... Values>
 constexpr auto lut(Generator&& generator_function, Values... values) ->
     typename std::enable_if<sizeof...(Values) == (Size - 1), std::array<T, Size>>::type
@@ -54,6 +69,7 @@ constexpr auto GeneratePowLut(Generator&& generator_function)
   return lut<Size, decltype(generator_function(uint8_t{0}))>(
       std::forward<Generator>(generator_function));
 }
+/*****************************************************************************************/
 
 /**
  * Returns the number of states you can pack into a 32-bit word
