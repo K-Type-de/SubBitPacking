@@ -1,6 +1,8 @@
 #ifndef _KT_SUBBITPACKESTRUCT_H_
 #define _KT_SUBBITPACKESTRUCT_H_
 
+#include <utils/uintpacked.h>
+
 #include <cstdint>
 
 #include "utils/compiletime.h"
@@ -37,12 +39,12 @@ constexpr std::array<uint32_t, SubBitPackedStructBase<Ns...>::kNumFields>
 
 template <uint16_t... Ns>
 constexpr uint8_t SubBitPackedStructBase<Ns...>::kBitsUsed;
-
 template <uint16_t... Ns>
 class SubBitPackedStruct : SubBitPackedStructBase<Ns...>
 {
   typedef SubBitPackedStructBase<Ns...> Super;
-  uint32_t data_;
+
+  uintPacked<Super::kBitsUsed> data_;
 
 public:
   SubBitPackedStruct() : data_{0} {};
@@ -62,6 +64,11 @@ public:
   uint8_t get_bits_used()
   {
     return Super::kBitsUsed;
+  }
+
+  uint8_t get_data_size()
+  {
+    return sizeof(this->data_) * 8;
   }
 };
 

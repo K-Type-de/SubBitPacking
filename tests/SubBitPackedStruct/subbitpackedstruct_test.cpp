@@ -36,6 +36,8 @@ using namespace kt;
 //   myStruct.state1 = myStruct.state3;
 // }
 
+#include <iostream>
+
 TEST(SubBitStructTest, StructTest)
 {
   constexpr uint8_t state_num_0 = 3;
@@ -45,8 +47,13 @@ TEST(SubBitStructTest, StructTest)
 
   SubBitPackedStruct<state_num_0, state_num_1, state_num_2, state_num_3> tstruct;
 
+  size_t a = tstruct.get_bits_used();
+  size_t b = tstruct.get_data_size();
+
   SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3> teststruct;
-  uint8_t bits_used = teststruct.get_bits_used();
+
+  size_t c = teststruct.get_bits_used();
+  size_t d = teststruct.get_data_size();
 
   for (size_t i = 0; i < 100000; ++i)
   {
