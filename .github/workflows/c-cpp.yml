@@ -2,9 +2,9 @@ name: C/C++ CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["testing"]
   pull_request:
-    branches: ["main"]
+    branches: ["testing"]
 
 jobs:
   build:
@@ -47,3 +47,13 @@ jobs:
         run: build/SuperBitPackedArrayTest
       - name: Test SuperBitPackedArrayNoExceptionsTest
         run: build/SuperBitPackedArrayNoExceptionsTest
+
+      # SubBitPackedStruct Tests
+      - name: clear build dir
+        run: rm -rf build/*
+      - name: cmake configure
+        run: cmake -S tests/SubBitPackedStruct -G Ninja -B build/
+      - name: build SubBitPackedStructTest
+        run: cmake --build build
+      - name: Test SubBitPackedStructTest
+        run: build/SubBitPackedStructTest
