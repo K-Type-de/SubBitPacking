@@ -9,6 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
 
+IF (WIN32)
+add_compile_options(-mno-ms-bitfields)
+ENDIF()
+
 # Fetch GoogleTest 1.12.1
 include(FetchContent)
 FetchContent_Declare(
