@@ -50,7 +50,9 @@ TEST(SubBitStructTest, StructTest)
   size_t a = tstruct.get_bits_used();
   size_t b = tstruct.get_data_size();
 
-  SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3> teststruct;
+  SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3> teststruct;
+  EXPECT_EQ(teststruct.get_bits_used(), 23);
+  EXPECT_EQ(teststruct.get_data_size(), 24);
 
   size_t c = teststruct.get_bits_used();
   size_t d = teststruct.get_data_size();

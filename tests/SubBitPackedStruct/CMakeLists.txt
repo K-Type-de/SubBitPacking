@@ -4,14 +4,13 @@ project(SubBitPackedStructLib)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists.txt)
 
 add_executable(
-  SubBitPackedStruct
+  SubBitPackedStructTest
   subbitpackedstruct_test.cpp
 )
 
 target_link_libraries(
-  SubBitPackedStruct
+  SubBitPackedStructTest
   GTest::gtest_main
 )
 
-gtest_discover_tests(SubBitPackedStruct)
-
+gtest_discover_tests(SubBitPackedStructTest)
