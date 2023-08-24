@@ -2,15 +2,15 @@
 #define _KT_UINTPACKED_H_
 
 #if defined __has_attribute
-#if __has_attribute(packed) && __has_attribute(gcc_struct)
-#define UINTPACKED_GCC_PACKING
-#define UINTPACKED_GCC_PACKING_ATTRIBUTES __attribute__((packed)) __attribute__((gcc_struct))
+#if __has_attribute(packed)
+#define UINTPACKED_COMPILER_PACKING
 #endif
-#else
-#define UINTPACKED_GCC_PACKING_ATTRIBUTES
 #endif
 
 #include <cstdint>
+
+namespace kt
+{
 
 template <uint32_t bits>
 struct uintPacked
@@ -26,12 +26,13 @@ struct uintPacked
   {
     return this->value;
   }
-#ifdef UINTPACKED_GCC_PACKING
+#ifdef UINTPACKED_COMPILER_PACKING
   unsigned int value : bits;
   uintPacked(uint32_t value) : value{value} {}
 #else
   /*
    * Dummy functions to get the smallest possible data type for the state values
+   * Not as good as UINTPACKED_COMPILER_PACKING, since there is no uint24_t
    */
   template <int N = bits, typename std::enable_if<(N <= 8), int>::type = 0>
   static uint8_t DataSize();
@@ -44,8 +45,11 @@ struct uintPacked
   decltype(DataSize()) value;
   uintPacked(decltype(DataSize()) value) : value{value} {}
 #endif
-} UINTPACKED_GCC_PACKING_ATTRIBUTES;
+#ifdef UINTPACKED_COMPILER_PACKING
+} __attribute__((packed));
+#else
+};
+#endif
 
-// };
-
+}  // namespace kt
 #endif  //_KT_UINTPACKED_H_
