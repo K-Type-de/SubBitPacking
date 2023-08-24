@@ -65,6 +65,37 @@ constexpr auto GeneratePowLut(Generator&& generator_function)
 }
 /*****************************************************************************************/
 
+/*
+ * Calculate the highest possible number that the variadic arguments cam be summed up to
+ */
+template <uint64_t prev, uint64_t current>
+constexpr uint64_t _HighestVariadicValue(uint64_t value, uint8_t exponent)
+{
+  return value + (current - 1) * prev;
+}
+
+template <uint64_t prev, uint64_t current, uint64_t... others>
+constexpr auto _HighestVariadicValue(uint64_t value, uint8_t exponent) ->
+    typename std::enable_if<sizeof...(others) != 0, uint64_t>::type
+{
+  return _HighestVariadicValue<current * prev, others...>(value + (current - 1) * prev,
+                                                          exponent + 1);
+}
+
+template <uint64_t current>
+constexpr uint64_t HighestVariadicValue()
+{
+  return current - 1;
+}
+
+template <uint64_t current, uint64_t... others>
+constexpr auto HighestVariadicValue() ->
+    typename std::enable_if<sizeof...(others) != 0, uint64_t>::type
+{
+  return _HighestVariadicValue<current, others...>(current - 1, 1);
+}
+/*****************************************************************************************/
+
 /**
  * Returns the number of states you can pack into a 32-bit word
  */
