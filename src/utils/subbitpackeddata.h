@@ -14,12 +14,14 @@ private:
   SubBitPackedData() {}
 
 public:
-  static inline uint16_t Get(const uint32_t &data, uint32_t divisor, uint16_t modulo)
+  template <typename T>
+  static inline uint16_t Get(const T &data, uint32_t divisor, uint16_t modulo)
   {
     return data / divisor % modulo;
   }
 
-  static inline void Set(uint32_t &data, uint32_t power, uint16_t modulo, uint16_t state)
+  template <typename T>
+  static inline void Set(T &data, uint32_t power, uint16_t modulo, uint16_t state)
   {
     uint16_t current_state = Get(data, power, modulo);
     data = data - (current_state * power) + (state * power);
