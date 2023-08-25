@@ -5,49 +5,27 @@
 
 #include <cstdint>
 
-#include "utils/compiletime.h"
+#include "subbitpackedstructbase.h"
 #include "utils/subbitpackeddata.h"
 
 namespace kt
 {
-
 template <uint16_t... Ns>
-class SubBitPackedStructBase
-{
-protected:
-  SubBitPackedStructBase() {}
-  static constexpr std::size_t kNumFields = sizeof...(Ns);
-  static constexpr std::array<uint32_t, kNumFields> kNumStates = {Ns...};
-  static constexpr std::array<uint32_t, kNumFields> kStatePowers =
-      CompileTime::GeneratePowLut<kNumFields>(CompileTime::VariadicStatePow<Ns...>);
-  static constexpr uint8_t kBitsUsed = 64 - CompileTime::NumberOfUnusedUpperBits<uint64_t>(
-                                                CompileTime::HighestVariadicValue<Ns...>());
-  static_assert(kBitsUsed <= 32, "[SubBitPackedStruct] Number of states exceed 32-bit limit");
-};
-
-// C++11 linker madness
-template <uint16_t... Ns>
-constexpr std::size_t SubBitPackedStructBase<Ns...>::kNumFields;
-
-template <uint16_t... Ns>
-constexpr std::array<uint32_t, SubBitPackedStructBase<Ns...>::kNumFields>
-    SubBitPackedStructBase<Ns...>::kNumStates;
-
-template <uint16_t... Ns>
-constexpr std::array<uint32_t, SubBitPackedStructBase<Ns...>::kNumFields>
-    SubBitPackedStructBase<Ns...>::kStatePowers;
-
-template <uint16_t... Ns>
-constexpr uint8_t SubBitPackedStructBase<Ns...>::kBitsUsed;
-template <uint16_t... Ns>
-class SubBitPackedStruct : SubBitPackedStructBase<Ns...>
+class SubBitPackedStruct : protected SubBitPackedStructBase<Ns...>
 {
   typedef SubBitPackedStructBase<Ns...> Super;
+  typedef uintPacked<Super::kBitsUsed> uint_packed_t;
 
-  uintPacked<Super::kBitsUsed> data_;
+  uint_packed_t data_;
 
 public:
   SubBitPackedStruct() : data_{0} {};
+  SubBitPackedStruct(uint_packed_t data) : data_{data} {};
+
+  static constexpr uint8_t GetBitsUsed()
+  {
+    return Super::kBitsUsed;
+  }
 
   uint16_t get(size_t index) const
   {
@@ -61,21 +39,15 @@ public:
                           state);
   }
 
-  uint8_t get_bits_used()
-  {
-    return Super::kBitsUsed;
-  }
-
-  uint8_t get_data_size()
+  uint8_t getDataSize()
   {
     return sizeof(this->data_) * 8;
   }
-};
 
-template <std::size_t num_values, uint16_t... Ns>
-class SubBitPackedStructArray : SubBitPackedStructBase<Ns...>
-{
-  typedef SubBitPackedStructBase<Ns...> Super;
+  const uint_packed_t &getData()
+  {
+    return this->data_;
+  }
 };
 
 }  // namespace kt

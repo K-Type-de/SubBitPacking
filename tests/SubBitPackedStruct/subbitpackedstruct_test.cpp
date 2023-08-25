@@ -47,15 +47,15 @@ TEST(SubBitStructTest, StructTest)
 
   SubBitPackedStruct<state_num_0, state_num_1, state_num_2, state_num_3> tstruct;
 
-  size_t a = tstruct.get_bits_used();
-  size_t b = tstruct.get_data_size();
+  size_t a = tstruct.GetBitsUsed();
+  size_t b = tstruct.getDataSize();
 
   SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3> teststruct;
-  EXPECT_EQ(teststruct.get_bits_used(), 23);
-  EXPECT_EQ(teststruct.get_data_size(), 24);
+  EXPECT_EQ(teststruct.GetBitsUsed(), 23);
+  EXPECT_EQ(teststruct.getDataSize(), 24);
 
-  size_t c = teststruct.get_bits_used();
-  size_t d = teststruct.get_data_size();
+  size_t c = teststruct.GetBitsUsed();
+  size_t d = teststruct.getDataSize();
 
   for (size_t i = 0; i < 100000; ++i)
   {
