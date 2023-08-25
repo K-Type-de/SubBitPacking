@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKESTRUCTBASE_H_
-#define _KT_SUBBITPACKESTRUCTBASE_H_
+#ifndef _KT_SUBBITPACKEDSTRUCTBASE_H_
+#define _KT_SUBBITPACKEDSTRUCTBASE_H_
 
 #include <cstdint>
 
@@ -41,4 +41,4 @@ constexpr uint8_t SubBitPackedStructBase<Ns...>::kBitsUsed;
 
 }  // namespace kt
 
-#endif  // _KT_SUBBITPACKESTRUCTBASE_H_
+#endif  // _KT_SUBBITPACKEDSTRUCTBASE_H_

@@ -1,49 +1,32 @@
-#ifndef _KT_SUPERBITPACKESTRUCTARRAY_H_
-#define _KT_SUPERBITPACKESTRUCTARRAY_H_
+#ifndef _KT_SUPERBITPACKEDSTRUCTARRAY_H_
+#define _KT_SUPERBITPACKEDSTRUCTARRAY_H_
 
 #include <cstdint>
 
 #include "subbitpackedstruct.h"
+#include "subbitpackedstructarray.h"
+#include "utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt
 {
-namespace Internal
-{
-struct SuperBitPackedStructArrayEntryMetadata
-{
-  std::size_t start_index;
-  std::size_t bit_shift;
-};
-}  // namespace Internal
-
 template <typename StructEntry, std::size_t num_entries>
 class SuperBitPackedStructArray
 {
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
 
-  // Choose wheather to hold real struct entries, or uin32_t if shifting is needed
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  static StructEntry DataType();
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  static uint32_t DataType();
+  static_assert(kExtraBitsPerWord > 0,
+                "[SuperBitPackedStructArray] Cannot SuperBitPack structs with no extra bits. Use "
+                "\"SubBitPackedStructArray\" instead");
 
   static constexpr std::size_t kEntrySize =
       (num_entries * kBitsPerEntry) / 32 +
       ((num_entries * kBitsPerEntry) % 32 !=
        0);  // Add +1 array entry if it does not already fit perfectly
 
-  decltype(DataType()) storage_[kEntrySize];
+  uint32_t storage_[kEntrySize];
 
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline StructEntry &_getEntry(std::size_t entry_index)
-  {
-    return this->storage_[entry_index];
-  }
-
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline Internal::SuperBitPackedStructArrayEntryMetadata getEntryMetadata(
-      std::size_t entry_index) const
+  inline Internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t entry_index) const
   {
     const std::size_t bit_address = (entry_index * 32) - (entry_index * kExtraBitsPerWord);
     const std::size_t start_index = bit_address / 32;
@@ -52,7 +35,6 @@ class SuperBitPackedStructArray
     return {start_index, bit_shift};
   }
 
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
   inline StructEntry _getEntry(std::size_t start_index, std::size_t bit_shift) const
   {
     if (!bit_shift)
@@ -74,7 +56,6 @@ class SuperBitPackedStructArray
     return {combined_entry};
   }
 
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
   inline void _setEntry(std::size_t start_index, std::size_t bit_shift, StructEntry entry)
   {
     if (!bit_shift)
@@ -98,27 +79,8 @@ class SuperBitPackedStructArray
     this->storage_[start_index + 1] |= entry.getData() >> (32 - bit_shift);
   }
 
-  /**
-   * get/set for num_states where there is no extra bit(s) available for compression.
-   */
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline uint16_t _getState(std::size_t entry_index, std::size_t state_index)
-  {
-    return this->_getEntry(entry_index).get(state_index);
-  }
-
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline void _setState(std::size_t entry_index, std::size_t state_index, uint16_t state)
-  {
-    this->_getEntry(entry_index).set(state_index, state);
-  }
-  /********************************************************************************/
-
-  /**
-   * get/set for num_states where extra bit(s) are available for compression.
-   */
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline uint16_t _getState(std::size_t entry_index, std::size_t state_index) const
+public:
+  inline uint16_t getState(std::size_t entry_index, std::size_t state_index) const
   {
     auto metadata = this->getEntryMetadata(entry_index);
     const StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
@@ -126,8 +88,7 @@ class SuperBitPackedStructArray
     return entry.get(state_index);
   }
 
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline void _setState(std::size_t entry_index, std::size_t state_index, uint16_t state)
+  inline void setState(std::size_t entry_index, std::size_t state_index, uint16_t state)
   {
     auto metadata = this->getEntryMetadata(entry_index);
     StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
@@ -136,20 +97,8 @@ class SuperBitPackedStructArray
 
     this->_setEntry(metadata.start_index, metadata.bit_shift, entry);
   }
-  /********************************************************************************/
-
-public:
-  inline uint16_t getState(std::size_t entry_index, std::size_t state_index)
-  {
-    return this->_getState(entry_index, state_index);
-  }
-
-  inline void setState(std::size_t entry_index, std::size_t state_index, uint16_t state)
-  {
-    this->_setState(entry_index, state_index, state);
-  }
 };
 
 }  // namespace kt
 
-#endif  // _KT_SUPERBITPACKESTRUCTARRAY_H_
+#endif  // _KT_SUPERBITPACKEDSTRUCTARRAY_H_
