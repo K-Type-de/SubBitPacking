@@ -22,23 +22,23 @@ class SuperBitPackedStructArray
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
 
+  // Choose wheather to hold real struct entries, or uin32_t if shifting is needed
+  template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
+  static StructEntry DataType();
+  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
+  static uint32_t DataType();
+
   static constexpr std::size_t kEntrySize =
       (num_entries * kBitsPerEntry) / 32 +
       ((num_entries * kBitsPerEntry) % 32 !=
        0);  // Add +1 array entry if it does not already fit perfectly
 
-  uint32_t storage_[kEntrySize];
+  decltype(DataType()) storage_[kEntrySize];
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
   inline StructEntry &_getEntry(std::size_t entry_index)
   {
-    return this->entries_[entry_index];
-  }
-
-  template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline void _setEntry(std::size_t entry_index, const StructEntry &entry)
-  {
-    this->entries_[entry_index] = entry;
+    return this->storage_[entry_index];
   }
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
@@ -74,7 +74,7 @@ class SuperBitPackedStructArray
     return {combined_entry};
   }
 
-  // template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
+  template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
   inline void _setEntry(std::size_t start_index, std::size_t bit_shift, StructEntry entry)
   {
     if (!bit_shift)
@@ -100,10 +100,9 @@ class SuperBitPackedStructArray
 
   /**
    * get/set for num_states where there is no extra bit(s) available for compression.
-   * Works like SubBitPackedArray
    */
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline uint16_t _getState(std::size_t entry_index, std::size_t state_index) const
+  inline uint16_t _getState(std::size_t entry_index, std::size_t state_index)
   {
     return this->_getEntry(entry_index).get(state_index);
   }

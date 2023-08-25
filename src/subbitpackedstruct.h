@@ -44,7 +44,7 @@ public:
     return sizeof(this->data_) * 8;
   }
 
-  const uint_packed_t &getData()
+  const uint_packed_t &getData() const
   {
     return this->data_;
   }
