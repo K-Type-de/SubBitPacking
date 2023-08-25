@@ -7,10 +7,11 @@ message(STATUS "Building Unit Tests")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+IF (NOT MSVC)
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
-
 IF (WIN32)
 add_compile_options(-mno-ms-bitfields)
+ENDIF()
 ENDIF()
 
 # Fetch GoogleTest 1.12.1
