@@ -43,7 +43,7 @@ class SuperBitPackedStructArray
       // Shift out upper bits
       entry <<= kExtraBitsPerWord;
       entry >>= kExtraBitsPerWord;
-      return {entry};
+      return static_cast<StructEntry>(entry);
     }
 
     const uint32_t &entry_1 = this->storage_[start_index];
@@ -53,7 +53,7 @@ class SuperBitPackedStructArray
     // Shift out upper bits
     combined_entry <<= kExtraBitsPerWord;
     combined_entry >>= kExtraBitsPerWord;
-    return {combined_entry};
+    return static_cast<StructEntry>(combined_entry);
   }
 
   inline void _setEntry(std::size_t start_index, std::size_t bit_shift, StructEntry entry)
