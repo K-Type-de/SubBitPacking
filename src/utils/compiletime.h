@@ -97,7 +97,7 @@ constexpr auto HighestVariadicValue() ->
 /*****************************************************************************************/
 
 /**
- * Returns the number of states you can pack into a 32-bit word
+ * Returns the number of sub-bit packed states can fit into a 32-bit word
  */
 static constexpr uint8_t NumberOfStatesPer4ByteWord(uint16_t num_states)
 {

@@ -57,3 +57,23 @@ jobs:
         run: cmake --build build
       - name: Test SubBitPackedStructTest
         run: build/SubBitPackedStructTest
+
+      # SubBitPackedStructArray Tests
+      - name: clear build dir
+        run: rm -rf build/*
+      - name: cmake configure
+        run: cmake -S tests/SubBitPackedStructArray -G Ninja -B build/
+      - name: build SubBitPackedStructArrayTest
+        run: cmake --build build
+      - name: Test SubBitPackedStructArrayTest
+        run: build/SubBitPackedStructArrayTest
+
+      ## SuperBitPackedStructArray Tests
+      - name: clear build dir
+        run: rm -rf build/*
+      - name: cmake configure
+        run: cmake -S tests/SuperBitPackedStructArray -G Ninja -B build/
+      - name: build SuperBitPackedStructArrayTest
+        run: cmake --build build
+      - name: Test SuperBitPackedStructArrayTest
+        run: build/SuperBitPackedStructArrayTest
