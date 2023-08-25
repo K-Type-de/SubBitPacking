@@ -36,3 +36,29 @@ TEST(SuperBitStructArrayTest, StructArrayTest)
     EXPECT_EQ(ret_state_3, i % state_num_3) << "Index: " << i;
   }
 }
+
+TEST(SuperBitStructArrayTest, StructArrayNoCompressionTest)
+{
+  constexpr std::size_t array_size = 1023;  // Some uneven number
+  constexpr std::size_t loop_size = 10000;
+
+  // SubBitPackedStruct with 20 values - 3 states each - takes up exactly 32 bit per array entry
+  // No compression will be done
+  SuperBitPackedStructArray<
+      SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3>, array_size>
+      array;
+
+  for (size_t i = 0; i < loop_size; ++i)
+  {
+    for (size_t j = 0; j < 20; ++j)
+    {
+      array.setState(i % array_size, j, (i + j) % 3);
+    }
+
+    for (size_t j = 0; j < 20; ++j)
+    {
+      uint16_t ret_state = array.getState(i % array_size, j);
+      EXPECT_EQ(ret_state, (i + j) % 3) << "Entry index: " << i << " - State index: " << j;
+    }
+  }
+}
