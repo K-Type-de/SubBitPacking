@@ -4,17 +4,10 @@
 #include "packedarray.h"
 #include "utils/compiletime.h"
 #include "utils/subbitpackeddata.h"
+#include "utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt
 {
-namespace Internal
-{
-struct SuperBitPackedArrayEntryMetadata
-{
-  std::size_t start_index;
-  std::size_t bit_shift;
-};
-}  // namespace Internal
 
 template <uint16_t num_states, std::size_t num_values>
 class SuperBitPackedArray : PackedArray<num_states, num_values>

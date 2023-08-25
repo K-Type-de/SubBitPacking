@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKESTRUCTARRAY_H_
-#define _KT_SUBBITPACKESTRUCTARRAY_H_
+#ifndef _KT_SUBBITPACKEDSTRUCTARRAY_H_
+#define _KT_SUBBITPACKEDSTRUCTARRAY_H_
 
 #include <cstdint>
 
@@ -37,4 +37,4 @@ public:
 
 }  // namespace kt
 
-#endif  // _KT_SUBBITPACKESTRUCTARRAY_H_
+#endif  // _KT_SUBBITPACKEDSTRUCTARRAY_H_

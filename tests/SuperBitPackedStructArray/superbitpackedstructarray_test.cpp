@@ -11,7 +11,7 @@ TEST(SuperBitStructArrayTest, StructArrayTest)
   constexpr uint8_t state_num_2 = 7;
   constexpr uint8_t state_num_3 = 9;
 
-  constexpr std::size_t array_size = 10000;
+  constexpr std::size_t array_size = 10023;  // Some uneven number
   constexpr std::size_t loop_size = 100000;
 
   SuperBitPackedStructArray<SubBitPackedStruct<state_num_0, state_num_1, state_num_2, state_num_3>,
@@ -37,28 +37,37 @@ TEST(SuperBitStructArrayTest, StructArrayTest)
   }
 }
 
-TEST(SuperBitStructArrayTest, StructArrayNoCompressionTest)
+TEST(SuperBitStructArrayTest, StructArrayTest2)
 {
-  constexpr std::size_t array_size = 1023;  // Some uneven number
-  constexpr std::size_t loop_size = 10000;
+  constexpr uint8_t state_num_0 = 2;
+  constexpr uint8_t state_num_1 = 4;
+  constexpr uint8_t state_num_2 = 8;
+  constexpr uint8_t state_num_3 = 12;
 
-  // SubBitPackedStruct with 20 values - 3 states each - takes up exactly 32 bit per array entry
-  // No compression will be done
-  SuperBitPackedStructArray<
-      SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3>, array_size>
+  constexpr std::size_t array_size = 9897;  // Some uneven number
+
+  SuperBitPackedStructArray<SubBitPackedStruct<state_num_0, state_num_1, state_num_2, state_num_3>,
+                            array_size>
       array;
 
-  for (size_t i = 0; i < loop_size; ++i)
+  for (size_t i = 0; i < array_size; ++i)
   {
-    for (size_t j = 0; j < 20; ++j)
-    {
-      array.setState(i % array_size, j, (i + j) % 3);
-    }
+    array.setState(i, 0, i % state_num_0);
+    array.setState(i, 1, i % state_num_1);
+    array.setState(i, 2, i % state_num_2);
+    array.setState(i, 3, i % state_num_3);
+  }
 
-    for (size_t j = 0; j < 20; ++j)
-    {
-      uint16_t ret_state = array.getState(i % array_size, j);
-      EXPECT_EQ(ret_state, (i + j) % 3) << "Entry index: " << i << " - State index: " << j;
-    }
+  for (size_t i = 0; i < array_size; ++i)
+  {
+    uint16_t ret_state_0 = array.getState(i, 0);
+    uint16_t ret_state_1 = array.getState(i, 1);
+    uint16_t ret_state_2 = array.getState(i, 2);
+    uint16_t ret_state_3 = array.getState(i, 3);
+
+    EXPECT_EQ(ret_state_0, i % state_num_0) << "Index: " << i;
+    EXPECT_EQ(ret_state_1, i % state_num_1) << "Index: " << i;
+    EXPECT_EQ(ret_state_2, i % state_num_2) << "Index: " << i;
+    EXPECT_EQ(ret_state_3, i % state_num_3) << "Index: " << i;
   }
 }

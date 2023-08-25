@@ -11,6 +11,8 @@
 
 namespace kt
 {
+namespace Internal
+{
 
 template <uint32_t bits>
 struct uintPacked
@@ -51,5 +53,6 @@ struct uintPacked
 };
 #endif
 
+}  // namespace Internal
 }  // namespace kt
 #endif  //_KT_UINTPACKED_H_

@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKESTRUCT_H_
-#define _KT_SUBBITPACKESTRUCT_H_
+#ifndef _KT_SUBBITPACKEDSTRUCT_H_
+#define _KT_SUBBITPACKEDSTRUCT_H_
 
 #include <utils/uintpacked.h>
 
@@ -14,7 +14,7 @@ template <uint16_t... Ns>
 class SubBitPackedStruct : protected SubBitPackedStructBase<Ns...>
 {
   typedef SubBitPackedStructBase<Ns...> Super;
-  typedef uintPacked<Super::kBitsUsed> uint_packed_t;
+  typedef Internal::uintPacked<Super::kBitsUsed> uint_packed_t;
 
   uint_packed_t data_;
 
@@ -52,4 +52,4 @@ public:
 
 }  // namespace kt
 
-#endif  // _KT_SUBBITPACKESTRUCT_H_
+#endif  // _KT_SUBBITPACKEDSTRUCT_H_
