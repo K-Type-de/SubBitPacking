@@ -14,7 +14,7 @@ class SuperBitPackedArray : PackedArray<num_states, num_values>
 {
 public:
   static constexpr uint8_t kStatesPer4ByteWord =
-      CompileTime::NumberOfStatesPer4ByteWord(num_states);
+      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
 
   static constexpr uint8_t kExtraBitsPerWord = CompileTime::NumberOfUnusedUpperBits<uint32_t>(
       CompileTime::Pow<num_states>(kStatesPer4ByteWord) - 1);

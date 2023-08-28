@@ -4,7 +4,6 @@
 #include "../test_sizes.h"
 #include "subbitpackedarray.h"
 
-
 using namespace kt;
 
 template <typename T>
@@ -14,11 +13,11 @@ class SubBitPackedArrayTest : public ::testing::Test
 
 TYPED_TEST_SUITE(SubBitPackedArrayTest, test_state_sizes);
 
-// Tests if precalculated NumberOfStatesPer4ByteWord returns correct values
+// Tests if precalculated NumberOfStatesPer4ByteSubBitPackedWord returns correct values
 TYPED_TEST(SubBitPackedArrayTest, NumberOfStatesPerEntryTest)
 {
   static constexpr auto num_states = TypeParam::value;
-  uint8_t states_per_4_byte_word = CompileTime::NumberOfStatesPer4ByteWord(num_states);
+  uint8_t states_per_4_byte_word = CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
   uint8_t states_per_4_byte_word_calculated = sizeof(uint32_t) * 8 / (log(num_states) / log(2));
 
   EXPECT_EQ(states_per_4_byte_word, states_per_4_byte_word_calculated);
@@ -30,7 +29,7 @@ TYPED_TEST(SubBitPackedArrayTest, MinEntrySizeTest)
 {
   static constexpr auto num_states = TypeParam::value;
   static constexpr uint8_t states_per_4_byte_word =
-      CompileTime::NumberOfStatesPer4ByteWord(num_states);
+      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
 
   SubBitPackedArray<num_states, states_per_4_byte_word> one_entry_array{};
   EXPECT_EQ(one_entry_array.getEntrySize(), 1);

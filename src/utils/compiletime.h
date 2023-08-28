@@ -66,7 +66,8 @@ constexpr auto GeneratePowLut(Generator&& generator_function)
 /*****************************************************************************************/
 
 /*
- * Calculate the highest possible number that the variadic arguments cam be summed up to
+ * Calculate the highest possible number that the states of the variadic arguments cam be summed up
+ * to
  */
 template <uint64_t prev, uint64_t current>
 constexpr uint64_t _HighestVariadicValue(uint64_t value, uint8_t exponent)
@@ -82,24 +83,18 @@ constexpr auto _HighestVariadicValue(uint64_t value, uint8_t exponent) ->
                                                           exponent + 1);
 }
 
-template <uint64_t current>
+template <uint64_t current, uint64_t... others>
 constexpr uint64_t HighestVariadicValue()
 {
-  return current - 1;
-}
-
-template <uint64_t current, uint64_t... others>
-constexpr auto HighestVariadicValue() ->
-    typename std::enable_if<sizeof...(others) != 0, uint64_t>::type
-{
-  return _HighestVariadicValue<current, others...>(current - 1, 1);
+  return sizeof...(others) == 0 ? current - 1
+                                : _HighestVariadicValue<current, others...>(current - 1, 1);
 }
 /*****************************************************************************************/
 
 /**
  * Returns the number of sub-bit packed states can fit into a 32-bit word
  */
-static constexpr uint8_t NumberOfStatesPer4ByteWord(uint16_t num_states)
+static constexpr uint8_t NumberOfStatesPer4ByteSubBitPackedWord(uint16_t num_states)
 {
   return num_states <= 2      ? 32
          : num_states == 3    ? 20

@@ -4,7 +4,6 @@
 #include "../test_sizes.h"
 #include "superbitpackedarray.h"
 
-
 using namespace kt;
 
 template <typename T>
@@ -21,7 +20,8 @@ TYPED_TEST(SuperBitPackedArrayTest, SizeTest)
   static constexpr size_t num_values = 10000;
   SuperBitPackedArray<num_states, num_values> array{};
 
-  uint8_t number_of_states_per_word = CompileTime::NumberOfStatesPer4ByteWord(num_states);
+  uint8_t number_of_states_per_word =
+      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
   std::size_t number_of_entries =
       num_values / number_of_states_per_word + (num_values % number_of_states_per_word != 0);
 

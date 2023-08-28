@@ -12,7 +12,7 @@ class SubBitPackedArray : PackedArray<num_states, num_values>
 {
 private:
   static constexpr uint8_t kStatesPer4ByteWord =
-      CompileTime::NumberOfStatesPer4ByteWord(num_states);
+      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
 
   static constexpr std::size_t kEntrySize =
       num_values / kStatesPer4ByteWord +
