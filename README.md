@@ -116,14 +116,14 @@ The space saved for all other values is 0%. That means it is not better nor wors
 
 ## Saving Even More Space
 
-Lets say you want to store `X` number of states.
+Lets say you want to store $n$ number of states.
 The formula to find out how many values can be stored in a sub-bit-packed 32-bit word is:
 
-$$ {32 \over \log(X) / \log(2)} $$
+$$ {32 \over \log_2(n)} $$
 
 Filling in `5` we get something like 13,78.. meaning that every 32-bit word wastes around 0.78 state values. We can calculate the number of wasted (whole) bits per 32-bit word using this formula:
 
-$$ {\lfloor (32 / ({\log(X) \over \log(2)}) -  \lfloor 32/({\log(X) \over \log(2)}) \rfloor )\times {\log(X) \over \log(2)}  \rfloor} $$
+$$ {\lfloor \left({32 \over \log_2(n)} - \lfloor {32 \over \log_2(n)} \rfloor \right)\cdot {\log_2(n) }  \rfloor} $$
 
 Again, filling in `5` gets us 1, meaning there is 1 bit in every 32-bit word that goes unused. (For a higher number of states, the number of unused bits per word can even go as high as 10)
 
@@ -177,34 +177,53 @@ The following results stem from running [Code](https://gist.github.com/Christian
 ## SubBitPacked Structs
 
 
-Arrays with $n$ possible states and a size of $i$ will be computed like this:
-$$ \sum{a_i * n^{i}} $$
+Arrays with $n$ possible states and a size of $m$ elements will be computed like this:
+$$ \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
+
+Structs with variadic field states size will be computed like this:
 ```c++
-PackedStruct myStruct<3,5,9>;
+PackedStruct<3,5,9> myStruct;
 
 myStruct.a1 = 2;
 myStruct.a2 = 4;
 myStruct.a3 = 7;
 ```
 
+Number of states:
+$$ n_1 = 3 $$
+$$ n_2 = 5 $$
+$$ n_3 = 9 $$
+
+State values:
+$$ a_1 = 2 $$
+$$ a_2 = 4 $$
+$$ a_3 = 7 $$
 
 Power for each field:
 
-
 $$ p_1 = 1 $$
-$$ p_n = p_{n-1} * a_{n-1} $$
+$$ p_i = p_{i-1} \cdot n_{i-1} $$
 
+Example:
 $$ p_1 = 1 $$
 $$ p_2 = 3 $$
-$$ p_3 = 15 $$
-
-
-
-
+$$ p_3 = p_2 \cdot 5 = 15 $$
 
 Sum of value:
-$$ \sum{a_n * {p_n}} $$
+$$ \sum{a_n \cdot {p_n}} $$
+
+
+$$ computation = \sum_{i=1}^{m}{a_i \cdot {p_i}} = 2 \cdot 1 + 4 \cdot 3 + 7 \cdot 15 = 119 $$
+
+
+To retreive one value we need the following formular:
+
+$$ a_i(i) =  {computation \over {p_i}} \mod n_i $$
+
+Example:
+
+$$ a_i(2) =  {119 \over 3} \pmod 5 \equiv 39 \pmod 5 \equiv 4 $$
 
 
 ## How To Use
