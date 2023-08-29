@@ -7,7 +7,28 @@
 #endif
 #endif
 
+#ifndef UINTPACKED_COMPILER_PACKING
+#include "uint24.h"
+#endif
+
 #include <cstdint>
+
+struct uint24_t
+{
+  char data[3];
+
+  template <typename T>
+  uint24_t& operator=(T value)
+  {
+    static_cast<uint32_t>(*this->data) = value;
+    return *this;
+  }
+
+  operator uint32_t() const
+  {
+    return static_cast<uint32_t>(*this->data);
+  }
+};
 
 namespace kt
 {
@@ -31,25 +52,25 @@ struct uintPacked
 #ifdef UINTPACKED_COMPILER_PACKING
   unsigned int value : bits;
   uintPacked(uint32_t value) : value{value} {}
+} __attribute__((packed));
 #else
   /*
    * Dummy functions to get the smallest possible data type for the state values
-   * Not as good as UINTPACKED_COMPILER_PACKING, since there is no uint24_t
+   * Not as good as UINTPACKED_COMPILER_PACKING, since the implementation for 24-bit is slower than
+   * compiler packing
    */
   template <int N = bits, typename std::enable_if<(N <= 8), int>::type = 0>
   static uint8_t DataSize();
   template <int N = bits, typename std::enable_if<(N > 8 && N <= 16), int>::type = 0>
   static uint16_t DataSize();
-  template <int N = bits, typename std::enable_if<(N > 16), int>::type = 0>
+  template <int N = bits, typename std::enable_if<(N > 16 && N <= 24), int>::type = 0>
+  static Internal::uint24_kt DataSize();
+  template <int N = bits, typename std::enable_if<(N > 24), int>::type = 0>
   static uint32_t DataSize();
   /***************************************************************************/
 
   decltype(DataSize()) value;
   uintPacked(decltype(DataSize()) value) : value{value} {}
-#endif
-#ifdef UINTPACKED_COMPILER_PACKING
-} __attribute__((packed));
-#else
 };
 #endif
 

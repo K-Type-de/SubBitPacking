@@ -24,7 +24,7 @@ public:
   static inline void Set(T &data, uint32_t power, uint16_t modulo, uint16_t state)
   {
     uint16_t current_state = Get(data, power, modulo);
-    data = data - (current_state * power) + (state * power);
+    data = power * (state - current_state) + data;
   }
 };
 

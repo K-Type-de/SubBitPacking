@@ -4,37 +4,13 @@
 
 using namespace kt;
 
-// TEST(SubBitStructTest, SyntaxCheck)
-// {
-//   TStruct<3, 5, 7, 9> tstruct;
-
-//   EXPECT_EQ(4, tstruct.kNumFields);
-
-//   EXPECT_EQ(3, tstruct.kNumStates[0]);
-//   EXPECT_EQ(5, tstruct.kNumStates[1]);
-//   EXPECT_EQ(7, tstruct.kNumStates[2]);
-//   EXPECT_EQ(9, tstruct.kNumStates[3]);
-
-//   EXPECT_EQ(1, tstruct.kStatePowers[0]);
-//   EXPECT_EQ(3, tstruct.kStatePowers[1]);
-//   EXPECT_EQ(15, tstruct.kStatePowers[2]);
-//   EXPECT_EQ(105, tstruct.kStatePowers[3]);
-
-//   class MyStruct : public SubBitPackedStruct
-//   {
-//   public:
-//     Field<3> state1{*this};
-//     Field<7> state2{*this};
-//     Field<29> state3{*this};
-//   };
-
-//   MyStruct myStruct;
-
-//   myStruct.state1 = 1;
-
-//   uint32_t readstate = myStruct.state1;
-//   myStruct.state1 = myStruct.state3;
-// }
+#if defined(__GNUC__)
+const char *Compiler = "GNU";
+#elif defined(_MSC_VER)
+const char *Compiler = "MSVC";
+#else
+const char *Compiler = "OTHER";
+#endif
 
 #include <iostream>
 
@@ -52,7 +28,7 @@ TEST(SubBitStructTest, StructTest)
 
   SubBitPackedStruct<3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3> teststruct;
   EXPECT_EQ(teststruct.GetBitsUsed(), 23);
-  EXPECT_EQ(teststruct.getDataSize(), 24);
+  EXPECT_EQ(teststruct.getDataSize(), 24) << "Compiler: " << Compiler;
 
   size_t c = teststruct.GetBitsUsed();
   size_t d = teststruct.getDataSize();
