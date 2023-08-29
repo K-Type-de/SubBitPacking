@@ -51,3 +51,33 @@ TEST(SubBitStructTest, StructTest)
     EXPECT_EQ(ret_state_3, i % state_num_3) << "Index: " << i;
   }
 }
+
+TEST(SubBitStructTest, StructFieldTest)
+{
+  constexpr uint8_t state_num_0 = 3;
+  constexpr uint8_t state_num_1 = 5;
+  constexpr uint8_t state_num_2 = 7;
+  constexpr uint8_t state_num_3 = 9;
+
+  class MyStruct : public SubBitPackedStruct<state_num_0, state_num_1, state_num_2, state_num_3>
+  {
+  public:
+    Field state1{*this};
+    Field state2{*this};
+    Field state3{*this};
+    Field state4{*this};
+    Field state5{*this}; // ERROR: out of index
+  };
+
+  MyStruct myStruct;
+
+  myStruct.state1 = 1;
+
+  uint32_t readstate = myStruct.state1;
+  myStruct.state3 = readstate;
+
+  myStruct.state1 = (uint32_t)myStruct.state3;
+
+  myStruct.state2 = myStruct.state4;
+ 
+}
