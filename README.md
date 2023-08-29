@@ -85,13 +85,13 @@ When storing many values, we can save 25% memory here by not storing the values 
 
 ## How Does It Work?
 
-Internally the values are held in an array of 32-bit data chunks. Instead of bitwise packing, however, a form of [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) is used to store the values. The advantage of this is that you can pack (the same or) more values in a given data buffer than with traditional bitwise packing. The overall space saved for values with `X` different states can be calculated with the following formula:
+Internally the values are held in an array of 32-bit data chunks. Instead of bitwise packing, however, a form of [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) is used to store the values. The advantage of this is that you can pack (the same or) more values in a given data buffer than with traditional bitwise packing. The overall space saved for values with $n$ different states can be calculated with the following formula:
 
-$$ factor = {\lfloor32 / (\log(X) / \log(2))\rfloor \over \lfloor32 / \lceil(\log(X) / \log(2))\rceil \rfloor} $$
+$$ factor = {\lfloor {32 \div \log_2(n)  }\rfloor \over \lfloor {32 \div \lceil \log_2(n) \rceil } \rfloor} $$
 
 Lets say you want to store values with 3 different states:
 
-$$ factor = {\lfloor32 / (\log(3) / \log(2))\rfloor \over \lfloor32 / \lceil(\log(3) / \log(2))\rceil \rfloor} = 1.25$$
+$$ factor = {\lfloor {32 \div \log_2(3)  }\rfloor \over \lfloor {32 \div \lceil \log_2(3) \rceil } \rfloor} = 1.25$$
 
 This means an arithmetically packed buffer will be able to store 25% more values than with traditional packing. See [this table](#space-saved) for more values.
 
