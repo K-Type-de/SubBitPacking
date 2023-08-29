@@ -12,24 +12,6 @@
 #endif
 
 #include <cstdint>
-
-struct uint24_t
-{
-  char data[3];
-
-  template <typename T>
-  uint24_t& operator=(T value)
-  {
-    static_cast<uint32_t>(*this->data) = value;
-    return *this;
-  }
-
-  operator uint32_t() const
-  {
-    return static_cast<uint32_t>(*this->data);
-  }
-};
-
 namespace kt
 {
 namespace Internal

@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include "../test_sizes.h"
-#include "superbitpackedarray.h"
+#include "superbitpacked.h"
 
 using namespace kt;
 

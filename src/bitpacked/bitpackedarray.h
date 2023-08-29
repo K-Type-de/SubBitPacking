@@ -1,8 +1,8 @@
 #ifndef _KT_BITPACKEDARRAY_H_
 #define _KT_BITPACKEDARRAY_H_
 
-#include "packedarray.h"
-#include "utils/compiletime.h"
+#include "../base/packedarray.h"
+#include "../utils/compiletime.h"
 
 namespace kt
 {

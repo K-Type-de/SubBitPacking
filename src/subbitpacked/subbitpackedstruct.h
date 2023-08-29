@@ -1,12 +1,12 @@
 #ifndef _KT_SUBBITPACKEDSTRUCT_H_
 #define _KT_SUBBITPACKEDSTRUCT_H_
 
-#include <utils/uintpacked.h>
-
 #include <cstdint>
 
-#include "subbitpackedstructbase.h"
-#include "utils/subbitpackeddata.h"
+#include "../base/subbitpackedstructbase.h"
+#include "../utils/subbitpackeddata.h"
+#include "../utils/uintpacked.h"
+
 
 namespace kt
 {
