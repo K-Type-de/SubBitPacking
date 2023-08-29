@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "superbitpackedstructarray.h"
+#include "superbitpacked.h"
 
 using namespace kt;
 

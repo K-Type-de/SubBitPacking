@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include "../test_sizes.h"
-#include "subbitpackedarray.h"
+#include "subbitpacked.h"
 
 using namespace kt;
 

@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include "../test_sizes.h"
-#include "bitpackedarray.h"
+#include "bitpacked.h"
 
 using namespace kt;
 

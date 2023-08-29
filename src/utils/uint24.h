@@ -24,32 +24,32 @@ enum class endian
 
 class uint24_kt
 {
-  uint8_t _data[3];
+  uint8_t data_[3];
 
   template <int N = endian::native == endian::big, typename std::enable_if<(N > 0), int>::type = 0>
   inline uint32_t get() const
   {
-    return (_data[2] << 0) | (_data[1] << 8) | (_data[0] << 16);
+    return (data_[2] << 0) | (data_[1] << 8) | (data_[0] << 16);
   }
 
   template <int N = endian::native == endian::little,
             typename std::enable_if<(N > 0), int>::type = 0>
   inline typename std::enable_if<(N > 0), uint32_t>::type get() const
   {
-    return (_data[0] << 0) | (_data[1] << 8) | (_data[2] << 16);
+    return (data_[0] << 0) | (data_[1] << 8) | (data_[2] << 16);
   }
 
   template <int N = endian::native == endian::big, typename std::enable_if<(N > 0), int>::type = 0>
   inline void set(uint32_t value)
   {
-    memcpy(_data, &reinterpret_cast<uint8_t *>(&value)[1], 3);
+    memcpy(data_, &reinterpret_cast<uint8_t *>(&value)[1], 3);
   }
 
   template <int N = endian::native == endian::little,
             typename std::enable_if<(N > 0), int>::type = 0>
   inline typename std::enable_if<(N > 0), void>::type set(uint32_t value)
   {
-    memcpy(_data, &value, 3);
+    memcpy(data_, &value, 3);
   }
 
 public:

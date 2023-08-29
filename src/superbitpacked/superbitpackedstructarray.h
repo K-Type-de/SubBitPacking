@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
-#include "subbitpackedstruct.h"
-#include "subbitpackedstructarray.h"
+#include "../subbitpacked/subbitpackedstruct.h"
+#include "../subbitpacked/subbitpackedstructarray.h"
 #include "utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt

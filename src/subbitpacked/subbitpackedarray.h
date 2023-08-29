@@ -1,9 +1,9 @@
 #ifndef _KT_SUBBITPACKEDARRAY_H_
 #define _KT_SUBBITPACKEDARRAY_H_
 
-#include "packedarray.h"
-#include "utils/compiletime.h"
-#include "utils/subbitpackeddata.h"
+#include "../base/packedarray.h"
+#include "../utils/compiletime.h"
+#include "../utils/subbitpackeddata.h"
 
 namespace kt
 {

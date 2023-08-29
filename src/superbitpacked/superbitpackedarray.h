@@ -1,10 +1,10 @@
 #ifndef _KT_SUPERBITPACKEDARRAY_H_
 #define _KT_SUPERBITPACKEDARRAY_H_
 
-#include "packedarray.h"
-#include "utils/compiletime.h"
-#include "utils/subbitpackeddata.h"
-#include "utils/superbitpackedarrayentrymetadata.h"
+#include "../base/packedarray.h"
+#include "../utils/compiletime.h"
+#include "../utils/subbitpackeddata.h"
+#include "../utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt
 {
