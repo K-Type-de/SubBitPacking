@@ -80,6 +80,22 @@ class SuperBitPackedStructArray
   }
 
 public:
+  struct Iterator;
+  Iterator begin()
+  {
+    return Iterator(*this, 0);
+  }
+  Iterator end()
+  {
+    return Iterator(*this, num_entries);
+  }
+
+  inline StructEntry getEntryCopy(std::size_t entry_index) const
+  {
+    auto metadata = this->getEntryMetadata(entry_index);
+    return this->_getEntry(metadata.start_index, metadata.bit_shift);
+  }
+
   inline uint16_t getState(std::size_t entry_index, std::size_t state_index) const
   {
     auto metadata = this->getEntryMetadata(entry_index);
@@ -98,6 +114,8 @@ public:
     this->_setEntry(metadata.start_index, metadata.bit_shift, entry);
   }
 };
+
+#include "superbitpackedstructarrayiterator.h"
 
 }  // namespace kt
 
