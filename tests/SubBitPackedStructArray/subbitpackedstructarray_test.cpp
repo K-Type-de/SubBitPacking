@@ -36,3 +36,40 @@ TEST(SubBitStructArrayTest, StructArrayTest)
     EXPECT_EQ(ret_state_3, i % state_num_3) << "Index: " << i;
   }
 }
+
+TEST(SubBitStructArrayTest, StructArrayIteratorTest)
+{
+  constexpr uint8_t state_num_0 = 2;
+  constexpr uint8_t state_num_1 = 3;
+  constexpr uint8_t state_num_2 = 4;
+  constexpr uint8_t state_num_3 = 5;
+
+  constexpr std::size_t array_size = 10000;
+
+  SubBitPackedStructArray<SubBitPackedStruct<state_num_0, state_num_1, state_num_2, state_num_3>,
+                          array_size>
+      array;
+
+  for (size_t i = 0; i < array_size; ++i)
+  {
+    array.setState(i, 0, i % state_num_0);
+    array.setState(i, 1, i % state_num_1);
+    array.setState(i, 2, i % state_num_2);
+    array.setState(i, 3, i % state_num_3);
+  }
+
+  size_t index = 0;
+  for (const auto& sub_bit_packed_struct : array)
+  {
+    uint16_t ret_state_0 = sub_bit_packed_struct.get(0);
+    uint16_t ret_state_1 = sub_bit_packed_struct.get(1);
+    uint16_t ret_state_2 = sub_bit_packed_struct.get(2);
+    uint16_t ret_state_3 = sub_bit_packed_struct.get(3);
+
+    EXPECT_EQ(ret_state_0, index % state_num_0) << "Index: " << index;
+    EXPECT_EQ(ret_state_1, index % state_num_1) << "Index: " << index;
+    EXPECT_EQ(ret_state_2, index % state_num_2) << "Index: " << index;
+    EXPECT_EQ(ret_state_3, index % state_num_3) << "Index: " << index;
+    ++index;
+  }
+}

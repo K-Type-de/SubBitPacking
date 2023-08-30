@@ -14,6 +14,16 @@ class SubBitPackedStructArray
   StructEntry entries_[num_entries];
 
 public:
+  struct Iterator;
+  Iterator begin()
+  {
+    return Iterator(*this, 0);
+  }
+  Iterator end()
+  {
+    return Iterator(*this, num_entries);
+  }
+
   inline StructEntry &getEntry(std::size_t entry_index)
   {
     return this->entries_[entry_index];
@@ -34,6 +44,8 @@ public:
     return this->getEntry(entry_index).set(state_index, state);
   }
 };
+
+#include "subbitpackedstructarrayiterator.h"
 
 }  // namespace kt
 
