@@ -89,7 +89,7 @@ Internally the values are held in an array of 32-bit data chunks. Instead of bit
 
 $$ factor = {\lfloor {32 \div \log_2(n)  }\rfloor \over \lfloor {32 \div \lceil \log_2(n) \rceil } \rfloor} $$
 
-Lets say you want to store values with 3 different states:
+Lets say you want to store values with `3` different states:
 
 $$ factor = {\lfloor {32 \div \log_2(3)  }\rfloor \over \lfloor {32 \div \lceil \log_2(3) \rceil } \rfloor} = 1.25$$
 

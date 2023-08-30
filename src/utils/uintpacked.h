@@ -32,7 +32,8 @@ struct uintPacked
     return this->value;
   }
 #ifdef UINTPACKED_COMPILER_PACKING
-  unsigned int value : bits;
+  unsigned int value : (bits / 8 + (bits % 8 != 0)) *
+                       8;  // Set bitfield size to next multiple of 8
   uintPacked(uint32_t value) : value{value} {}
 } __attribute__((packed));
 #else
