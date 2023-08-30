@@ -1,16 +1,16 @@
-# Sub-Bit Packed Array
+# Sub-Bit Packing
 
 ![SubBitPackedArrayLogo](images/SubBitPackedArray.svg)
 
 ## Table Of Contents
 
-- [Sub-Bit Packed Array](#sub-bit-packed-array)
+- [Sub-Bit Packing](#sub-bit-packing)
   - [Table Of Contents](#table-of-contents)
   - [TL;DR](#tldr)
   - [Summary](#summary)
   - [The Problem With Storing States](#the-problem-with-storing-states)
-    - [Bitwise Packing](#bitwise-packing)
-    - [Sub-Bit Packing](#sub-bit-packing)
+    - [Bitwise State Packing](#bitwise-state-packing)
+    - [Sub-Bit State Packing](#sub-bit-state-packing)
   - [How Does It Work?](#how-does-it-work)
   - [Space Saved](#space-saved)
   - [Saving Even More Space](#saving-even-more-space)
@@ -20,6 +20,7 @@
     - [SuperBitPackedArray](#superbitpackedarray)
   - [Comparing Arrays](#comparing-arrays)
   - [SubBitPacked Structs](#subbitpacked-structs)
+    - [Underlying Mathematics](#underlying-mathematics)
 - [How To Use](#how-to-use)
   - [BitPacked-, SubBitPacked- \& SuperBitPacked Arrays](#bitpacked--subbitpacked---superbitpacked-arrays)
     - [Initialization](#initialization)
@@ -61,7 +62,7 @@ In order to store 10000 values we are using 10000 bytes or 80000 bits which coul
 
 This naive method to store states is a huge waste of memory.
 
-### Bitwise Packing
+### Bitwise State Packing
 
 The first step to mitigate wasting memory is to store the states in the least amount of bits necessary.
 To store three states, we need a maximum of 2 bits.
@@ -70,7 +71,7 @@ So to store 10000 states we would only need 20000 bits or 2500 bytes.
 
 We can already save 75% of storage (10000 vs. 2500) with this method.
 
-### Sub-Bit Packing
+### Sub-Bit State Packing
 
 The above method works perfectly fine if the number of states a value can represent can make use of the bits it is stored in. But there is still wasted memory if that is not the case.
 As you may have already figured out, when using 2 bits to represent 3 states, there is one extra unused state:
@@ -141,7 +142,7 @@ This library provides several types of arrays to store state values in. Internal
 
 ### BitPackedArray
 
-Stores values as described [here](#bitwise-packing). If the number of bits needed to store states does not evenly devide 32, some values are stored across two 32-bit words. When accessed, these words are shifted accordingly to get/set values. This is done to prevent wasting bits.
+Stores values as described [here](#bitwise-state-packing). If the number of bits needed to store states does not evenly devide 32, some values are stored across two 32-bit words. When accessed, these words are shifted accordingly to get/set values. This is done to prevent wasting bits.
 
 ### SubBitPackedArray
 
@@ -178,67 +179,66 @@ The following results stem from running [Code](https://gist.github.com/Christian
 
 ## SubBitPacked Structs
 
-Arrays with $n$ possible states and a size of $m$ elements will be computed like this:
+Additionally to the packing of homogeneous state values, this library provides a way to store multiple values with different number of states in a single struct. This is called a `SubBitPackedStruct`. The underlying arithmetic is similar to how [Sub-Bit State Packing](#sub-bit-state-packing) works. Look [here](#underlying-mathematics) for how this works.
+
+It is also possible to store multiple `SubBitPackedStructs` loosely in a `SubBitPackedStructArray` or tightly packed in a `SuperBitPackedStructArray`. See [SubBitPackedStruct](#subbitpackedstruct) for how to do this.
+
+### Underlying Mathematics
+
+The value of `SubBitPackedArray` entries for values $a_i$ with $n$ possible states and a size of $m$ elements is computed like this:
 
 $$ \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
-Structs with variadic field states size will be computed like this:
+$$ a_i \in \left[ 0, n \right[$$
+
+The underlying value of a `SubBitPackedStruct` is calculated in a similar way. However, instead of mutliplying a states' value with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplicator $p_i$.
+This multiplicator can be calculated with this formula:
+
+$$ p_i = \prod_{j=0}^{i-1} n_{j} $$
+
+This means the underlying `SubBitPackedStruct` value $v$ can be calculated like this:
+
+$$ v = \sum_{i=0}^{m-1}{a_i \cdot {p_i}}  $$
+
+A state value can be retrieved with this formula:
+
+$$ a_i =  {v \over {p_i}} \mod n_i $$
+
+Here is a code example and a few calculations to demonstrate what is going on behind the scenes:
 
 ```c++
-PackedStruct<3,5,9> myStruct;
+SubBitPackedStruct<3,5,9> myStruct;
 
-myStruct.a1 = 2;
-myStruct.a2 = 4;
-myStruct.a3 = 7;
+myStruct.set(0, 2); //Set 3-state value to 2
+myStruct.set(1, 4); //Set 5-state value to 4
+myStruct.set(2, 7); //Set 9-state value to 7
+
+myStruct.get(1); //Get the state of the 5-state value (4)
 ```
 
 Number of states:
 
-$$ n_1 = 3 $$
-
-$$ n_2 = 5 $$
-
-$$ n_3 = 9 $$
+$$ n_0 = 3 \qquad n_1 = 5 \qquad n_2 = 9 $$
 
 State values:
 
-$$ a_1 = 2 $$
+$$ a_0 = 2 \qquad a_1 = 4 \qquad a_2 = 7 $$
 
-$$ a_2 = 4 $$
+Multiplicators:
 
-$$ a_3 = 7 $$
+$$ p_0 = 1 \qquad p_1 = 3 \qquad p_2 = 3 \cdot 5 = 15 $$
 
-Power for each field:
+Sum of values:
 
-$$ p_1 = 1 $$
+$$ v = 2 \cdot 1 + 4 \cdot 3 + 7 \cdot 15 = 119 $$
 
-$$ p_i = p_{i-1} \cdot n_{i-1} $$
+Retrieve state value 1:
 
-Example:
-
-$$ p_1 = 1 $$
-
-$$ p_2 = 3 $$
-
-$$ p_3 = p_2 \cdot 5 = 15 $$
-
-Sum of value:
-
-$$ \sum{a_n \cdot {p_n}} $$
-
-$$ computation = \sum_{i=1}^{m}{a_i \cdot {p_i}} = 2 \cdot 1 + 4 \cdot 3 + 7 \cdot 15 = 119 $$
-
-To retreive one value we need the following formular:
-
-$$ a_i(i) =  {computation \over {p_i}} \mod n_i $$
-
-Example:
-
-$$ a_i(2) =  {119 \over 3} \pmod 5 \equiv 39 \pmod 5 \equiv 4 $$
+$$ a_1 =  {119 \over 3} \pmod 5 \equiv 4 $$
 
 # How To Use
 
-Basic usage for this library
+Basic usage examples for this library.
 
 ## BitPacked-, SubBitPacked- & SuperBitPacked Arrays
 
