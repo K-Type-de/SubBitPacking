@@ -15,7 +15,8 @@ class SuperBitPackedStructArray
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
 
-  static_assert(kExtraBitsPerWord > 0,
+  // 8, 16, 24 and 32-bit can be stored in SubBitPackedStructArray without wasting bits
+  static_assert(kBitsPerEntry % 8 != 0,
                 "[SuperBitPackedStructArray] Cannot SuperBitPack structs with no extra bits. Use "
                 "\"SubBitPackedStructArray\" instead");
 
@@ -96,7 +97,7 @@ public:
     return this->_getEntry(metadata.start_index, metadata.bit_shift);
   }
 
-  inline uint16_t getState(std::size_t entry_index, std::size_t state_index) const
+  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const
   {
     auto metadata = this->getEntryMetadata(entry_index);
     const StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
@@ -104,7 +105,7 @@ public:
     return entry.get(state_index);
   }
 
-  inline void setState(std::size_t entry_index, std::size_t state_index, uint16_t state)
+  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state)
   {
     auto metadata = this->getEntryMetadata(entry_index);
     StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
@@ -112,6 +113,11 @@ public:
     entry.set(state_index, state);
 
     this->_setEntry(metadata.start_index, metadata.bit_shift, entry);
+  }
+
+  std::size_t getByteSize() const
+  {
+    return kEntrySize * sizeof(uint32_t);
   }
 };
 

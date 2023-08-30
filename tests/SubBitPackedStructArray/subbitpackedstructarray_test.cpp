@@ -20,15 +20,15 @@ TEST(SubBitStructArrayTest, StructArrayTest)
 
   for (size_t i = 0; i < loop_size; ++i)
   {
-    array.setState(i % array_size, 0, i % state_num_0);
-    array.setState(i % array_size, 1, i % state_num_1);
-    array.setState(i % array_size, 2, i % state_num_2);
-    array.setState(i % array_size, 3, i % state_num_3);
+    array.set(i % array_size, 0, i % state_num_0);
+    array.set(i % array_size, 1, i % state_num_1);
+    array.set(i % array_size, 2, i % state_num_2);
+    array.set(i % array_size, 3, i % state_num_3);
 
-    uint16_t ret_state_0 = array.getState(i % array_size, 0);
-    uint16_t ret_state_1 = array.getState(i % array_size, 1);
-    uint16_t ret_state_2 = array.getState(i % array_size, 2);
-    uint16_t ret_state_3 = array.getState(i % array_size, 3);
+    uint16_t ret_state_0 = array.get(i % array_size, 0);
+    uint16_t ret_state_1 = array.get(i % array_size, 1);
+    uint16_t ret_state_2 = array.get(i % array_size, 2);
+    uint16_t ret_state_3 = array.get(i % array_size, 3);
 
     EXPECT_EQ(ret_state_0, i % state_num_0) << "Index: " << i;
     EXPECT_EQ(ret_state_1, i % state_num_1) << "Index: " << i;
@@ -52,10 +52,10 @@ TEST(SubBitStructArrayTest, StructArrayIteratorTest)
 
   for (size_t i = 0; i < array_size; ++i)
   {
-    array.setState(i, 0, i % state_num_0);
-    array.setState(i, 1, i % state_num_1);
-    array.setState(i, 2, i % state_num_2);
-    array.setState(i, 3, i % state_num_3);
+    array.set(i, 0, i % state_num_0);
+    array.set(i, 1, i % state_num_1);
+    array.set(i, 2, i % state_num_2);
+    array.set(i, 3, i % state_num_3);
   }
 
   size_t index = 0;

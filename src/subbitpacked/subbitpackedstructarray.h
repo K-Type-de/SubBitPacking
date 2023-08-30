@@ -29,19 +29,24 @@ public:
     return this->entries_[entry_index];
   }
 
-  inline StructEntry getEntryCopy(std::size_t entry_index)
+  inline StructEntry getEntryCopy(std::size_t entry_index) const
   {
     return this->getEntry(entry_index);
   }
 
-  inline uint16_t getState(std::size_t entry_index, std::size_t state_index)
+  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const
   {
     return this->getEntry(entry_index).get(state_index);
   }
 
-  inline void setState(std::size_t entry_index, std::size_t state_index, uint16_t state)
+  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state)
   {
     return this->getEntry(entry_index).set(state_index, state);
+  }
+
+  std::size_t getByteSize() const
+  {
+    return num_entries * sizeof(StructEntry);
   }
 };
 

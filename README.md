@@ -20,11 +20,13 @@
     - [SuperBitPackedArray](#superbitpackedarray)
   - [Comparing Arrays](#comparing-arrays)
   - [SubBitPacked Structs](#subbitpacked-structs)
-  - [How To Use](#how-to-use)
+- [How To Use](#how-to-use)
+  - [BitPacked-, SubBitPacked- \& SuperBitPacked Arrays](#bitpacked--subbitpacked---superbitpacked-arrays)
     - [Initialization](#initialization)
     - [Set Values](#set-values)
     - [Retrieve Values](#retrieve-values)
     - [Getting The Actual Amount Of Used Memory In Bytes](#getting-the-actual-amount-of-used-memory-in-bytes)
+  - [SubBitPackedStruct](#subbitpackedstruct)
   - [Exceptions](#exceptions)
 
 ## TL;DR
@@ -35,7 +37,7 @@ A library to store state values in a memory efficient way using sub-bit compress
 
 Storing states bitwise can lead to huge amounts of wasted memory. This library aims to save memory by packing values arithmetically. [This table](#space-saved) lists the amount of saved space when comparing arithmetically packed values and bit-packed values.
 The drawback is a runtime overhead for setting/retrieving the values because calculations need to be done instead of simple addressing.
-Therefore if the number of states you want to store has no spacial benefit (e.g. powers of 2) you should stick to bitwise packing because of the faster runtime.
+Therefore, if the number of states you want to store has no spacial benefit (e.g. powers of 2) you should stick to bitwise packing because of the faster runtime.
 On the other hand, you can fit more values of states that can be tightly packed together on platforms where memory is the limiting factor (e.g. embedded systems) utilizing this library.
 
 ## The Problem With Storing States
@@ -53,7 +55,7 @@ On the other hand, you can fit more values of states that can be tightly packed 
 
 `sizeof(MyState)` will give you 1 byte
 
-`sizeof(a_lot_of_states)` will therefore give you 10000
+`sizeof(a_lot_of_states)` will, therefore, give you 10000
 
 In order to store 10000 values we are using 10000 bytes or 80000 bits which could store up to $$2^{(10000 * 8)} = 2^{80000} \approx 10^{24000} $$ binary states  - but we only need $$3^{10000} \approx 10^{4771} $$ states.
 
@@ -112,7 +114,7 @@ Here's a table for values with different number of states and how much space is 
 |65-84 | 25%|
 |1025-1625 | 50%|
 
-The space saved for all other values is 0%. That means it is not better nor worse than bitwise packing. However, the access times are slower. Therefore sub-bit-packing is not optimal for such use cases.
+The space saved for all other values is 0%. That means it is not better nor worse than bitwise packing. However, the access times are slower. Therefore, sub-bit-packing is not optimal for such use cases.
 
 ## Saving Even More Space
 
@@ -193,24 +195,31 @@ myStruct.a3 = 7;
 Number of states:
 
 $$ n_1 = 3 $$
+
 $$ n_2 = 5 $$
+
 $$ n_3 = 9 $$
 
 State values:
 
 $$ a_1 = 2 $$
+
 $$ a_2 = 4 $$
+
 $$ a_3 = 7 $$
 
 Power for each field:
 
 $$ p_1 = 1 $$
+
 $$ p_i = p_{i-1} \cdot n_{i-1} $$
 
 Example:
 
 $$ p_1 = 1 $$
+
 $$ p_2 = 3 $$
+
 $$ p_3 = p_2 \cdot 5 = 15 $$
 
 Sum of value:
@@ -227,7 +236,11 @@ Example:
 
 $$ a_i(2) =  {119 \over 3} \pmod 5 \equiv 39 \pmod 5 \equiv 4 $$
 
-## How To Use
+# How To Use
+
+Basic usage for this library
+
+## BitPacked-, SubBitPacked- & SuperBitPacked Arrays
 
 ### Initialization
 
@@ -257,9 +270,9 @@ Or on the heap:
         RED
     }
 
-    size_t pixel = ...
+    size_t pixel_index = ...
 
-    displayBuffer->set(pixel, static_cast<uint16_t>(Color::RED));
+    displayBuffer->set(pixel_index, static_cast<uint16_t>(Color::RED));
 ```
 
 ### Retrieve Values
@@ -272,6 +285,37 @@ Or on the heap:
 
 ```c++
     displayBuffer->getByteSize();
+```
+
+## SubBitPackedStruct
+
+If you want to pack multiple values, that hold a different amount of states each, into a single struct you can achieve this as follows:
+
+```c++
+  kt::SubBitPackedStruct<3,5,6> stateStruct{};
+```
+
+This struct now holds 3 values, that can have `3`, `5` and `6` different states, respectively.
+
+Accessing values is done by specifying the corresponding index:
+
+```c++
+  stateStruct.get(0); //Gets the state information from the 3-state value
+  stateStruct.set(1, SOME_STATE); //Sets the state for the 5-state value
+```
+
+When storing multiple (in this case 1000) `SubBitPackedStructs` you can choose between the following two arrays, depending on your need for access performance and memory efficiency:
+
+```c++
+  auto stateStructArray = new kt::SubBitPackedStructArray<SubBitPackedStruct<3,5,6>, 1000>{};
+  auto stateStructArray = new kt::SuperBitPackedStructArray<SubBitPackedStruct<3,5,6>, 1000>{};
+```
+
+Getting/Setting values can be done by stating the array index for the wanted struct and also the value index for the selected struct:
+
+```c++
+  stateStructArray.get(187, 1); //Get the 5-state value of the struct with index 187
+  stateStructArray.set(313, 2, SOME_STATE); //Set the 6-state value of the struct with index 313
 ```
 
 ## Exceptions
