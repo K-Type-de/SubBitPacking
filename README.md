@@ -176,12 +176,12 @@ The following results stem from running [Code](https://gist.github.com/Christian
 
 ## SubBitPacked Structs
 
-
 Arrays with $n$ possible states and a size of $m$ elements will be computed like this:
+
 $$ \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
-
 Structs with variadic field states size will be computed like this:
+
 ```c++
 PackedStruct<3,5,9> myStruct;
 
@@ -191,11 +191,13 @@ myStruct.a3 = 7;
 ```
 
 Number of states:
+
 $$ n_1 = 3 $$
 $$ n_2 = 5 $$
 $$ n_3 = 9 $$
 
 State values:
+
 $$ a_1 = 2 $$
 $$ a_2 = 4 $$
 $$ a_3 = 7 $$
@@ -206,16 +208,16 @@ $$ p_1 = 1 $$
 $$ p_i = p_{i-1} \cdot n_{i-1} $$
 
 Example:
+
 $$ p_1 = 1 $$
 $$ p_2 = 3 $$
 $$ p_3 = p_2 \cdot 5 = 15 $$
 
 Sum of value:
+
 $$ \sum{a_n \cdot {p_n}} $$
 
-
 $$ computation = \sum_{i=1}^{m}{a_i \cdot {p_i}} = 2 \cdot 1 + 4 \cdot 3 + 7 \cdot 15 = 119 $$
-
 
 To retreive one value we need the following formular:
 
@@ -224,7 +226,6 @@ $$ a_i(i) =  {computation \over {p_i}} \mod n_i $$
 Example:
 
 $$ a_i(2) =  {119 \over 3} \pmod 5 \equiv 39 \pmod 5 \equiv 4 $$
-
 
 ## How To Use
 
