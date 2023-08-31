@@ -27,7 +27,7 @@ class SubBitPackedStruct : protected PackedStruct<Ns...>
     this->set(index + 1, other_states...);
   }
 
-  void initialValueCalculation(std::size_t index, PackedState state)
+  inline void initialValueCalculation(std::size_t index, PackedState state)
   {
     this->data_ = this->data_ + state * Super::kStatePowers[index];
   }
@@ -35,13 +35,13 @@ class SubBitPackedStruct : protected PackedStruct<Ns...>
   template <typename... State>
   void initialValueCalculation(std::size_t index, PackedState state, State... other_states)
   {
-    this->data_ = this->data_ + state * Super::kStatePowers[index];
+    this->initialValueCalculation(index, state);
     this->initialValueCalculation(index + 1, other_states...);
   }
 
 public:
   SubBitPackedStruct() : data_{0} {}
-  SubBitPackedStruct(uint_packed_t data) : data_{data} {}
+  SubBitPackedStruct(const SubBitPackedStruct &other) : data_{other.data_} {}
 
   template <typename... State>
   SubBitPackedStruct(State... states) : data_{0}

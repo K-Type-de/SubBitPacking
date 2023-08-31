@@ -1,6 +1,6 @@
 # Sub-Bit Packing
 
-![SubBitPackedArrayLogo](images/SubBitPackedArray.svg)
+![SubBitPackedArrayLogo](images/SubBitPacking.svg)
 
 ## Table Of Contents
 
@@ -210,7 +210,7 @@ Here is a code example and a few calculations to demonstrate what is going on be
 
 ```c++
 // Create struct and set initial values to 2, 4 and 7
-SubBitPackedStruct<3,5,9> myStruct{2, 4, 7};
+SubBitPackedStruct<3, 5, 9> myStruct{2, 4, 7};
 
 myStruct.get(1); // Get the state of the 5-state value (4)
 ```
