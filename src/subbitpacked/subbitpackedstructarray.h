@@ -3,13 +3,14 @@
 
 #include <cstdint>
 
+#include "../base/packedarray.h"
 #include "subbitpackedstruct.h"
 
 namespace kt
 {
 
 template <typename StructEntry, std::size_t num_entries>
-class SubBitPackedStructArray
+class SubBitPackedStructArray : public PackedStructArray<num_entries>
 {
   StructEntry entries_[num_entries];
 
@@ -26,6 +27,7 @@ public:
 
   inline StructEntry &getEntry(std::size_t entry_index)
   {
+    this->checkValueBoundries(entry_index);
     return this->entries_[entry_index];
   }
 
@@ -34,17 +36,24 @@ public:
     return this->getEntry(entry_index);
   }
 
-  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const
+  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const override
   {
+    this->checkValueBoundries(entry_index);
     return const_cast<SubBitPackedStructArray *>(this)->getEntry(entry_index).get(state_index);
   }
 
-  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state)
+  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state) override
   {
+    this->checkValueBoundries(entry_index);
     return this->getEntry(entry_index).set(state_index, state);
   }
 
-  std::size_t getByteSize() const
+  std::size_t getEntrySize() const override
+  {
+    return num_entries;
+  }
+
+  std::size_t getByteSize() const override
   {
     return num_entries * sizeof(StructEntry);
   }
