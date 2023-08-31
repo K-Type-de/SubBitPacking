@@ -189,7 +189,7 @@ The value of `SubBitPackedArray` entries for values $a_i$ with $n$ possible stat
 
 $$ \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
-$$ \{ \: a_i \in \natnums_0 \: \lvert \: 0 \le a_i \lt n \: \} $$
+$$ \{ \: a_i \in \N_{0} \: \lvert \: 0 \le a_i \lt n \: \} $$
 
 The underlying value of a `SubBitPackedStruct` is calculated in a similar way. However, instead of mutliplying a states' value with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplicator $p_i$.
 This multiplicator can be calculated with this formula:
