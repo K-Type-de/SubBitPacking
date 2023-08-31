@@ -3,8 +3,10 @@
 
 #include "../base/packedarray.h"
 #include "../utils/compiletime.h"
+#include "../utils/packedstate.h"
 #include "../utils/subbitpackeddata.h"
 #include "../utils/superbitpackedarrayentrymetadata.h"
+
 
 namespace kt
 {
@@ -97,7 +99,7 @@ public:
    * Works like SubBitPackedArray
    */
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline uint16_t _get(std::size_t value_index) const
+  inline PackedState _get(std::size_t value_index) const
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
@@ -108,7 +110,7 @@ public:
   }
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline void _set(std::size_t value_index, uint16_t state)
+  inline void _set(std::size_t value_index, PackedState state)
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
@@ -123,7 +125,7 @@ public:
    * get/set for num_states where extra bit(s) available for compression.
    */
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline uint16_t _get(std::size_t value_index) const
+  inline PackedState _get(std::size_t value_index) const
   {
     auto metadata = this->getEntryMetadata(value_index);
     const uint32_t entry = this->getEntry(metadata.start_index, metadata.bit_shift);
@@ -133,7 +135,7 @@ public:
   }
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline void _set(std::size_t value_index, uint16_t state)
+  inline void _set(std::size_t value_index, PackedState state)
   {
     auto metadata = this->getEntryMetadata(value_index);
     uint32_t entry = this->getEntry(metadata.start_index, metadata.bit_shift);
@@ -158,12 +160,12 @@ public:
     return Iterator(*this, num_values);
   }
 
-  uint16_t get(std::size_t value_index) const override
+  PackedState get(std::size_t value_index) const override
   {
     return this->_get(value_index);
   }
 
-  void set(std::size_t value_index, uint16_t state) override
+  void set(std::size_t value_index, PackedState state) override
   {
     this->_set(value_index, state);
   }

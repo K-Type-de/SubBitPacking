@@ -3,7 +3,9 @@
 
 #include "../base/packedarray.h"
 #include "../utils/compiletime.h"
+#include "../utils/packedstate.h"
 #include "../utils/subbitpackeddata.h"
+
 
 namespace kt
 {
@@ -38,7 +40,7 @@ public:
 
   SubBitPackedArray() {}
 
-  uint16_t get(std::size_t value_index) const override
+  PackedState get(std::size_t value_index) const override
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
@@ -48,7 +50,7 @@ public:
                                  num_states);
   }
 
-  void set(std::size_t value_index, uint16_t state) override
+  void set(std::size_t value_index, PackedState state) override
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;

@@ -92,7 +92,7 @@ TYPED_TEST(SubBitPackedArrayTest, WriteReadIteratorTest)
   }
 
   size_t count = 0;
-  for (uint16_t state : array)
+  for (PackedState state : array)
   {
     ASSERT_EQ(state, count % num_states) << "Index: " << count;
     count++;
@@ -118,7 +118,7 @@ TYPED_TEST(SubBitPackedArrayTest, IteratorRandTest)
 
   while (iterator != array.end())
   {
-    uint16_t state = *iterator;
+    PackedState state = *iterator;
 
     ASSERT_EQ(state, start_index % num_states);
     ASSERT_EQ(state, array.get(start_index));

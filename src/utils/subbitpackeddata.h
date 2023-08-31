@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include "packedstate.h"
+
 namespace kt
 {
 /**
@@ -15,15 +17,15 @@ private:
 
 public:
   template <typename T>
-  static inline uint16_t Get(const T &data, uint32_t divisor, uint16_t modulo)
+  static inline PackedState Get(const T &data, uint32_t divisor, uint16_t modulo)
   {
     return data / divisor % modulo;
   }
 
   template <typename T>
-  static inline void Set(T &data, uint32_t power, uint16_t modulo, uint16_t state)
+  static inline void Set(T &data, uint32_t power, uint16_t modulo, PackedState state)
   {
-    uint16_t current_state = Get(data, power, modulo);
+    PackedState current_state = Get(data, power, modulo);
     data = power * (state - current_state) + data;
   }
 };

@@ -25,10 +25,10 @@ TEST(SubBitStructArrayTest, StructArrayTest)
     array.set(i % array_size, 2, i % state_num_2);
     array.set(i % array_size, 3, i % state_num_3);
 
-    uint16_t ret_state_0 = array.get(i % array_size, 0);
-    uint16_t ret_state_1 = array.get(i % array_size, 1);
-    uint16_t ret_state_2 = array.get(i % array_size, 2);
-    uint16_t ret_state_3 = array.get(i % array_size, 3);
+    PackedState ret_state_0 = array.get(i % array_size, 0);
+    PackedState ret_state_1 = array.get(i % array_size, 1);
+    PackedState ret_state_2 = array.get(i % array_size, 2);
+    PackedState ret_state_3 = array.get(i % array_size, 3);
 
     EXPECT_EQ(ret_state_0, i % state_num_0) << "Index: " << i;
     EXPECT_EQ(ret_state_1, i % state_num_1) << "Index: " << i;
@@ -61,10 +61,10 @@ TEST(SubBitStructArrayTest, StructArrayIteratorTest)
   size_t index = 0;
   for (const auto& sub_bit_packed_struct : array)
   {
-    uint16_t ret_state_0 = sub_bit_packed_struct.get(0);
-    uint16_t ret_state_1 = sub_bit_packed_struct.get(1);
-    uint16_t ret_state_2 = sub_bit_packed_struct.get(2);
-    uint16_t ret_state_3 = sub_bit_packed_struct.get(3);
+    PackedState ret_state_0 = sub_bit_packed_struct.get(0);
+    PackedState ret_state_1 = sub_bit_packed_struct.get(1);
+    PackedState ret_state_2 = sub_bit_packed_struct.get(2);
+    PackedState ret_state_3 = sub_bit_packed_struct.get(3);
 
     EXPECT_EQ(ret_state_0, index % state_num_0) << "Index: " << index;
     EXPECT_EQ(ret_state_1, index % state_num_1) << "Index: " << index;

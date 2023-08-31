@@ -52,14 +52,14 @@ TYPED_TEST(SuperBitPackedArrayTest, WriteReadTest)
 
   for (int i = 0; i < num_values; ++i)
   {
-    uint16_t set_state = i % num_states;
+    PackedState set_state = i % num_states;
     array.set(i, set_state);
   }
 
   for (int i = 0; i < num_values; ++i)
   {
-    uint16_t set_state = i % num_states;
-    uint16_t state = array.get(i);
+    PackedState set_state = i % num_states;
+    PackedState state = array.get(i);
     EXPECT_EQ(state, set_state) << "Index: " << i;
   }
 }
@@ -73,14 +73,14 @@ TYPED_TEST(SuperBitPackedArrayTest, WriteReadIteratorTest)
 
   for (int i = 0; i < num_values; ++i)
   {
-    uint16_t set_state = i % num_states;
+    PackedState set_state = i % num_states;
     array.set(i, set_state);
   }
 
   size_t count = 0;
-  for (uint16_t state : array)
+  for (PackedState state : array)
   {
-    uint16_t set_state = count % num_states;
+    PackedState set_state = count % num_states;
     EXPECT_EQ(state, set_state) << "Index: " << count;
     ++count;
   }
