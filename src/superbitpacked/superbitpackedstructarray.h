@@ -5,6 +5,7 @@
 
 #include "../base/packedarray.h"
 #include "../subbitpacked/subbitpackedstruct.h"
+#include "../utils/packedstate.h"
 #include "utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt
@@ -98,7 +99,7 @@ public:
     return this->_getEntry(metadata.start_index, metadata.bit_shift);
   }
 
-  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const override
+  inline PackedState get(std::size_t entry_index, std::size_t state_index) const override
   {
     this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
@@ -107,7 +108,7 @@ public:
     return entry.get(state_index);
   }
 
-  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state) override
+  inline void set(std::size_t entry_index, std::size_t state_index, PackedState state) override
   {
     this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);

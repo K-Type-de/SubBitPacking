@@ -51,7 +51,7 @@ TYPED_TEST(BitPackedArrayTest, WriteReadIteratorTest)
   }
 
   size_t count = 0;
-  for (uint16_t state : array)
+  for (PackedState state : array)
   {
     ASSERT_EQ(state, count % num_states) << "Index: " << count;
     count++;

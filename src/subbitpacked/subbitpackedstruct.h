@@ -4,6 +4,7 @@
 #include <cstdint>
 
 #include "../base/packedstruct.h"
+#include "../utils/packedstate.h"
 #include "../utils/subbitpackeddata.h"
 #include "../utils/uintpacked.h"
 
@@ -26,7 +27,7 @@ public:
     return Super::kBitsUsed;
   }
 
-  uint16_t get(size_t index) const
+  PackedState get(size_t index) const
   {
     this->checkStateBoundries(index);
 
@@ -34,7 +35,7 @@ public:
                                  Super::kNumStates[index]);
   }
 
-  void set(size_t index, uint16_t state)
+  void set(size_t index, PackedState state)
   {
     this->checkStateBoundries(index);
 

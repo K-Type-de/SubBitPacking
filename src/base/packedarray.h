@@ -7,6 +7,8 @@
 
 #include <cstdint>
 
+#include "../utils/packedstate.h"
+
 namespace kt
 {
 
@@ -35,8 +37,8 @@ protected:
   PackedStateArray() {}
 
 public:
-  virtual uint16_t get(std::size_t value_index) const = 0;
-  virtual void set(std::size_t value_index, uint16_t state) = 0;
+  virtual PackedState get(std::size_t value_index) const = 0;
+  virtual void set(std::size_t value_index, PackedState state) = 0;
   virtual std::size_t getEntrySize() const = 0;
   virtual std::size_t getByteSize() const = 0;
 };
@@ -48,8 +50,8 @@ protected:
   PackedStructArray() {}
 
 public:
-  virtual uint16_t get(std::size_t entry_index, std::size_t state_index) const = 0;
-  virtual void set(std::size_t entry_index, std::size_t state_index, uint16_t state) = 0;
+  virtual PackedState get(std::size_t entry_index, std::size_t state_index) const = 0;
+  virtual void set(std::size_t entry_index, std::size_t state_index, PackedState state) = 0;
   virtual std::size_t getEntrySize() const = 0;
   virtual std::size_t getByteSize() const = 0;
 };

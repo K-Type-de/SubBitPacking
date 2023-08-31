@@ -1,13 +1,11 @@
 #ifndef _KT_SUBBITPACKEDARRAY_ITERATOR_H_
 #define _KT_SUBBITPACKEDARRAY_ITERATOR_H_
 
-#include <cstdint>
-
 template <uint16_t num_states, std::size_t num_values>
 struct kt::SubBitPackedArray<num_states, num_values>::Iterator
 {
   using iterator_category = std::forward_iterator_tag;
-  using value_type = uint16_t;
+  using value_type = PackedState;
 
   Iterator(SubBitPackedArray& instance, uint32_t value_index)
       : instance_{instance},

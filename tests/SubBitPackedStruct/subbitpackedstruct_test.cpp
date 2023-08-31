@@ -40,10 +40,10 @@ TEST(SubBitStructTest, StructTest)
     tstruct.set(2, i % state_num_2);
     tstruct.set(3, i % state_num_3);
 
-    uint16_t ret_state_0 = tstruct.get(0);
-    uint16_t ret_state_1 = tstruct.get(1);
-    uint16_t ret_state_2 = tstruct.get(2);
-    uint16_t ret_state_3 = tstruct.get(3);
+    PackedState ret_state_0 = tstruct.get(0);
+    PackedState ret_state_1 = tstruct.get(1);
+    PackedState ret_state_2 = tstruct.get(2);
+    PackedState ret_state_3 = tstruct.get(3);
 
     EXPECT_EQ(ret_state_0, i % state_num_0) << "Index: " << i;
     EXPECT_EQ(ret_state_1, i % state_num_1) << "Index: " << i;
