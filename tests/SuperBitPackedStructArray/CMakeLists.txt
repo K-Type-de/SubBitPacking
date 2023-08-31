@@ -13,4 +13,6 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+target_compile_definitions(SuperBitPackedStructArrayTest PRIVATE KT_ENABLE_EXCEPTIONS)
+
 gtest_discover_tests(SuperBitPackedStructArrayTest)
