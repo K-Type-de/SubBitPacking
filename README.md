@@ -189,7 +189,7 @@ The value of `SubBitPackedArray` entries for values $a_i$ with $n$ possible stat
 
 $$ \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
-$$ a_i \in \left[ 0, n \right[$$
+$$ \{ \: a_i \in \natnums_0 \: \lvert \: 0 \le a_i \lt n \: \} $$
 
 The underlying value of a `SubBitPackedStruct` is calculated in a similar way. However, instead of mutliplying a states' value with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplicator $p_i$.
 This multiplicator can be calculated with this formula:
@@ -320,4 +320,4 @@ Getting/Setting values can be done by stating the array index for the wanted str
 
 ## Exceptions
 
-By default this library uses no exceptions. However, you can enable exceptions by setting the compile flag `KT_PACKEDARRAY_ENABLE_EXCEPTIONS`. This activates array boundary checks but will also slow down array accesses.
+By default this library uses no exceptions. However, you can enable exceptions by setting the compile flag `KT_ENABLE_EXCEPTIONS`. This activates array boundary checks but will also slow down array accesses.

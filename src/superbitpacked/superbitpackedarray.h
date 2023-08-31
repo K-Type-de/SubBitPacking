@@ -10,7 +10,7 @@ namespace kt
 {
 
 template <uint16_t num_states, std::size_t num_values>
-class SuperBitPackedArray : PackedArray<num_states, num_values>
+class SuperBitPackedArray : public PackedStateArray<num_states, num_values>
 {
 public:
   static constexpr uint8_t kStatesPer4ByteWord =

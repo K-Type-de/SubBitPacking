@@ -13,7 +13,7 @@ target_link_libraries(
   GTest::gtest_main
 )
 
-target_compile_definitions(BitPackedArrayTest PRIVATE KT_PACKEDARRAY_ENABLE_EXCEPTIONS)
+target_compile_definitions(BitPackedArrayTest PRIVATE KT_ENABLE_EXCEPTIONS)
 
 add_executable(
   BitPackedArrayNoExceptionsTest

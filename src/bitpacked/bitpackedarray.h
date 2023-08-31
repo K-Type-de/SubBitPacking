@@ -7,7 +7,7 @@
 namespace kt
 {
 template <uint16_t num_states, std::size_t num_values>
-class BitPackedArray : PackedArray<num_states, num_values>
+class BitPackedArray : PackedStateArray<num_states, num_values>
 {
   static_assert(num_states > 1 && num_states < 65536,
                 "[BitPackedArray] Number of states must be between 2 and 65535");

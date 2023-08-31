@@ -3,14 +3,14 @@
 
 #include <cstdint>
 
+#include "../base/packedarray.h"
 #include "../subbitpacked/subbitpackedstruct.h"
-#include "../subbitpacked/subbitpackedstructarray.h"
 #include "utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt
 {
 template <typename StructEntry, std::size_t num_entries>
-class SuperBitPackedStructArray
+class SuperBitPackedStructArray : public PackedStructArray<num_entries>
 {
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
@@ -93,20 +93,23 @@ public:
 
   inline StructEntry getEntryCopy(std::size_t entry_index) const
   {
+    this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
     return this->_getEntry(metadata.start_index, metadata.bit_shift);
   }
 
-  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const
+  inline uint16_t get(std::size_t entry_index, std::size_t state_index) const override
   {
+    this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
     const StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
 
     return entry.get(state_index);
   }
 
-  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state)
+  inline void set(std::size_t entry_index, std::size_t state_index, uint16_t state) override
   {
+    this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
     StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
 
@@ -115,7 +118,12 @@ public:
     this->_setEntry(metadata.start_index, metadata.bit_shift, entry);
   }
 
-  std::size_t getByteSize() const
+  std::size_t getEntrySize() const override
+  {
+    return kEntrySize;
+  }
+
+  std::size_t getByteSize() const override
   {
     return kEntrySize * sizeof(uint32_t);
   }
