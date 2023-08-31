@@ -209,13 +209,10 @@ $$ a_i =  {v \over {p_i}} \mod n_i $$
 Here is a code example and a few calculations to demonstrate what is going on behind the scenes:
 
 ```c++
-SubBitPackedStruct<3,5,9> myStruct;
+// Create struct and set initial values to 2, 4 and 7
+SubBitPackedStruct<3,5,9> myStruct{2, 4, 7};
 
-myStruct.set(0, 2); //Set 3-state value to 2
-myStruct.set(1, 4); //Set 5-state value to 4
-myStruct.set(2, 7); //Set 9-state value to 7
-
-myStruct.get(1); //Get the state of the 5-state value (4)
+myStruct.get(1); // Get the state of the 5-state value (4)
 ```
 
 Number of states:
