@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "../Mock/subbitpackeddata_mock.h"
 #include "subbitpacked.h"
 
 using namespace kt;

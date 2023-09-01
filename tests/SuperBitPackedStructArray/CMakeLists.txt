@@ -17,7 +17,7 @@ target_compile_definitions(SuperBitPackedStructArrayTest PRIVATE KT_ENABLE_EXCEP
 
 add_executable(
   SuperBitPackedStructArrayNoExceptionTest
-  superbitpackedstructarray_test.cpp
+  superbitpackedstructarraynoexception_test.cpp
 )
 
 target_link_libraries(

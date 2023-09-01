@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "../Mock/subbitpackeddata_mock.h"
 #include "superbitpacked.h"
 
 using namespace kt;
@@ -15,7 +16,7 @@ TEST(SuperBitStructArrayTest, NoExceptionTestFetchEntries)
   auto array_ptr =
       new (buf) SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
 
-  size_t num_state_values = array_ptr->getEntry(0).getNumberOfValues();
+  size_t num_state_values = array_ptr->getEntryCopy(0).getNumberOfValues();
 
   for (size_t i = 0; i < loop_size; ++i)
   {
@@ -23,7 +24,7 @@ TEST(SuperBitStructArrayTest, NoExceptionTestFetchEntries)
 
     try
     {
-      auto entry = array_ptr->getEntry(i);
+      auto entry = array_ptr->getEntryCopy(i);
 
       for (size_t j = 0; j < num_state_values * 2; ++j)
       {
@@ -60,7 +61,7 @@ TEST(SuperBitStructArrayTest, ExceptionTestDirectAccess)
   auto array_ptr =
       new (buf) SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
 
-  size_t num_state_values = array_ptr->getEntry(0).getNumberOfValues();
+  size_t num_state_values = array_ptr->getEntryCopy(0).getNumberOfValues();
 
   for (size_t i = 0; i < loop_size; ++i)
   {

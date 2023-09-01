@@ -31,7 +31,7 @@ jobs:
         run: rm -rf build/*
       - name: cmake configure
         run: cmake -S tests/SubBitPackedArray -G Ninja -B build/
-      - name: build SubBitPackedArrayTest
+      - name: build SubBitPackedArray
         run: cmake --build build
       - name: Test SubBitPackedArrayTest
         run: build/SubBitPackedArrayTest
@@ -43,7 +43,7 @@ jobs:
         run: rm -rf build/*
       - name: cmake configure
         run: cmake -S tests/SuperBitPackedArray -G Ninja -B build/
-      - name: build SuperBitPackedArrayTest
+      - name: build SuperBitPackedArray
         run: cmake --build build
       - name: Test SuperBitPackedArrayTest
         run: build/SuperBitPackedArrayTest
@@ -55,7 +55,7 @@ jobs:
         run: rm -rf build/*
       - name: cmake configure
         run: cmake -S tests/SubBitPackedStruct -G Ninja -B build/
-      - name: build SubBitPackedStructTest
+      - name: build SubBitPackedStruct
         run: cmake --build build
       - name: Test SubBitPackedStructTest
         run: build/SubBitPackedStructTest
@@ -67,7 +67,7 @@ jobs:
         run: rm -rf build/*
       - name: cmake configure
         run: cmake -S tests/SubBitPackedStructArray -G Ninja -B build/
-      - name: build SubBitPackedStructArrayTest
+      - name: build SubBitPackedStructArray
         run: cmake --build build
       - name: Test SubBitPackedStructArrayTest
         run: build/SubBitPackedStructArrayTest
@@ -79,7 +79,7 @@ jobs:
         run: rm -rf build/*
       - name: cmake configure
         run: cmake -S tests/SuperBitPackedStructArray -G Ninja -B build/
-      - name: build SuperBitPackedStructArrayTest
+      - name: build SuperBitPackedStructArray
         run: cmake --build build
       - name: Test SuperBitPackedStructArrayTest
         run: build/SuperBitPackedStructArrayTest
