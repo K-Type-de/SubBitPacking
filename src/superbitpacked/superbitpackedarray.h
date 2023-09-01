@@ -1,5 +1,5 @@
-#ifndef _KT_SUPERBITPACKEDARRAY_H_
-#define _KT_SUPERBITPACKEDARRAY_H_
+#ifndef KT_SUPERBITPACKEDARRAY_H
+#define KT_SUPERBITPACKEDARRAY_H
 
 #include "../base/packedarray.h"
 #include "../utils/compiletime.h"
@@ -7,24 +7,24 @@
 #include "../utils/subbitpackeddata.h"
 #include "../utils/superbitpackedarrayentrymetadata.h"
 
-
 namespace kt
 {
 
-template <uint16_t num_states, std::size_t num_values>
-class SuperBitPackedArray : public PackedStateArray<num_states, num_values>
+template <uint16_t NumStates, std::size_t NumValues>
+class SuperBitPackedArray : public PackedStateArray<NumStates, NumValues>
 {
-public:
+private:
   static constexpr uint8_t kStatesPer4ByteWord =
-      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
+      compiletime::NumberOfStatesPer4ByteSubBitPackedWord(NumStates);
 
-  static constexpr uint8_t kExtraBitsPerWord = CompileTime::NumberOfUnusedUpperBits<uint32_t>(
-      CompileTime::Pow<num_states>(kStatesPer4ByteWord) - 1);
+  static constexpr uint8_t kExtraBitsPerWord = compiletime::NumberOfUnusedUpperBits<uint32_t>(
+      compiletime::Pow<NumStates>(kStatesPer4ByteWord) - 1);
 
   static constexpr std::size_t kNumEntries =
-      num_values / kStatesPer4ByteWord +
-      (num_values % kStatesPer4ByteWord !=
-       0);  // Add +1 array entry if it does not already fit perfectly
+      NumValues / kStatesPer4ByteWord +
+      ((NumValues % kStatesPer4ByteWord != 0)
+           ? 1  // Add +1 array entry if it does not already fit perfectly
+           : 0);
 
   static constexpr std::size_t kEntrySize =
       kExtraBitsPerWord == 0 ? kNumEntries
@@ -32,12 +32,12 @@ public:
 
   // Calculate power lookup table at compile time
   static constexpr std::array<uint32_t, kStatesPer4ByteWord> kPowerLookupTable =
-      CompileTime::GeneratePowLut<kStatesPer4ByteWord>(CompileTime::Pow<num_states>);
+      compiletime::GeneratePowLut<kStatesPer4ByteWord>(compiletime::Pow<NumStates>);
 
   uint32_t entries_[kEntrySize] = {0};
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline Internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t value_index) const
+  inline internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t value_index) const
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
@@ -95,60 +95,60 @@ public:
   }
 
   /**
-   * get/set for num_states where there is no extra bit(s) available for compression.
+   * get/set for NumStates where there is no extra bit(s) available for compression.
    * Works like SubBitPackedArray
    */
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline PackedState _get(std::size_t value_index) const
+  inline PackedState getInternal(std::size_t value_index) const
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
 
     return SubBitPackedData::Get(this->entries_[entry_index],
                                  this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
-                                 num_states);
+                                 NumStates);
   }
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
-  inline void _set(std::size_t value_index, PackedState state)
+  inline void setInternal(std::size_t value_index, PackedState state)
   {
     this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
 
     SubBitPackedData::Set(this->entries_[entry_index],
-                          this->kPowerLookupTable[value_index % kStatesPer4ByteWord], num_states,
-                          state % num_states);
+                          this->kPowerLookupTable[value_index % kStatesPer4ByteWord], NumStates,
+                          state % NumStates);
   }
   /********************************************************************************/
 
   /**
-   * get/set for num_states where extra bit(s) available for compression.
+   * get/set for NumStates where extra bit(s) available for compression.
    */
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline PackedState _get(std::size_t value_index) const
+  inline PackedState getInternal(std::size_t value_index) const
   {
     auto metadata = this->getEntryMetadata(value_index);
     const uint32_t entry = this->getEntry(metadata.start_index, metadata.bit_shift);
 
     return SubBitPackedData::Get(entry, this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
-                                 num_states);
+                                 NumStates);
   }
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
-  inline void _set(std::size_t value_index, PackedState state)
+  inline void setInternal(std::size_t value_index, PackedState state)
   {
     auto metadata = this->getEntryMetadata(value_index);
     uint32_t entry = this->getEntry(metadata.start_index, metadata.bit_shift);
 
     SubBitPackedData::Set(entry, this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
-                          num_states, state % num_states);
+                          NumStates, state % NumStates);
 
     this->setEntry(metadata.start_index, metadata.bit_shift, entry);
   }
   /********************************************************************************/
 
 public:
-  SuperBitPackedArray() {}
+  SuperBitPackedArray() = default;
 
   struct Iterator;
   Iterator begin()
@@ -157,17 +157,17 @@ public:
   }
   Iterator end()
   {
-    return Iterator(*this, num_values);
+    return Iterator(*this, NumValues);
   }
 
   PackedState get(std::size_t value_index) const override
   {
-    return this->_get(value_index);
+    return this->getInternal(value_index);
   }
 
   void set(std::size_t value_index, PackedState state) override
   {
-    this->_set(value_index, state);
+    this->setInternal(value_index, state);
   }
 
   inline std::size_t getEntrySize() const override
@@ -187,21 +187,21 @@ public:
 };
 
 // Needed for C++11 linkage
-template <uint16_t num_states, std::size_t num_values>
-constexpr std::array<uint32_t, SuperBitPackedArray<num_states, num_values>::kStatesPer4ByteWord>
-    SuperBitPackedArray<num_states, num_values>::kPowerLookupTable;
+template <uint16_t NumStates, std::size_t NumValues>
+constexpr std::array<uint32_t, SuperBitPackedArray<NumStates, NumValues>::kStatesPer4ByteWord>
+    SuperBitPackedArray<NumStates, NumValues>::kPowerLookupTable;
 
-template <uint16_t num_states, std::size_t num_values>
-constexpr uint8_t SuperBitPackedArray<num_states, num_values>::kExtraBitsPerWord;
+template <uint16_t NumStates, std::size_t NumValues>
+constexpr uint8_t SuperBitPackedArray<NumStates, NumValues>::kExtraBitsPerWord;
 
-template <uint16_t num_states, std::size_t num_values>
-constexpr std::size_t SuperBitPackedArray<num_states, num_values>::kNumEntries;
+template <uint16_t NumStates, std::size_t NumValues>
+constexpr std::size_t SuperBitPackedArray<NumStates, NumValues>::kNumEntries;
 
-template <uint16_t num_states, std::size_t num_values>
-constexpr std::size_t SuperBitPackedArray<num_states, num_values>::kEntrySize;
+template <uint16_t NumStates, std::size_t NumValues>
+constexpr std::size_t SuperBitPackedArray<NumStates, NumValues>::kEntrySize;
 
 #include "superbitpackedarrayiterator.h"
 
 }  // namespace kt
 
-#endif  //_KT_SUPERBITPACKEDARRAY_H_
+#endif  // KT_SUPERBITPACKEDARRAY_H

@@ -1,10 +1,10 @@
-#ifndef _KT_SUBBITPACKEDSTRUCTARRAY_ITERATOR_H_
-#define _KT_SUBBITPACKEDSTRUCTARRAY_ITERATOR_H_
+#ifndef KT_SUBBITPACKEDSTRUCTARRAY_ITERATOR_H
+#define KT_SUBBITPACKEDSTRUCTARRAY_ITERATOR_H
 
 #include <cstdint>
 
-template <typename StructEntry, std::size_t num_entries>
-struct kt::SubBitPackedStructArray<StructEntry, num_entries>::Iterator
+template <typename StructEntry, std::size_t NumEntries>
+struct kt::SubBitPackedStructArray<StructEntry, NumEntries>::Iterator
 {
   using iterator_category = std::forward_iterator_tag;
   using value_type = StructEntry;
@@ -48,4 +48,4 @@ private:
   uint32_t entry_index_;
 };
 
-#endif  // _KT_SUBBITPACKEDSTRUCTARRAY_ITERATOR_H_
+#endif  // KT_SUBBITPACKEDSTRUCTARRAY_ITERATOR_H

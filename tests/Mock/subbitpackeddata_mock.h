@@ -1,12 +1,12 @@
-#ifndef _KT_SUBBITPACKEDDATA_H_
-#define _KT_SUBBITPACKEDDATA_H_
+#ifndef KT_SUBBITPACKEDDATA_H
+#define KT_SUBBITPACKEDDATA_H
 
 #include <cstdint>
 
 namespace kt
 {
 /**
- * Mock implementation of SubBitPackedData that does nothing to avoid potential devisions by 0
+ * Mock implementation of SubBitPackedData that does nothing, to avoid potential devisions by 0
  */
 class SubBitPackedData
 {
@@ -28,4 +28,4 @@ public:
 
 }  // namespace kt
 
-#endif  //_KT_SUBBITPACKEDDATA_H_
+#endif  // KT_SUBBITPACKEDDATA_H

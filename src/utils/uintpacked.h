@@ -1,5 +1,5 @@
-#ifndef _KT_UINTPACKED_H_
-#define _KT_UINTPACKED_H_
+#ifndef KT_UINTPACKED_H
+#define KT_UINTPACKED_H
 
 #if defined __has_attribute
 #if __has_attribute(packed)
@@ -14,14 +14,14 @@
 #include <cstdint>
 namespace kt
 {
-namespace Internal
+namespace internal
 {
 
-template <uint32_t bits>
-struct uintPacked
+template <uint32_t Bits>
+struct UintPacked
 {
   template <typename T>
-  uintPacked& operator=(T value)
+  UintPacked& operator=(T value)
   {
     this->value = value;
     return *this;
@@ -32,9 +32,9 @@ struct uintPacked
     return this->value;
   }
 #ifdef UINTPACKED_COMPILER_PACKING
-  unsigned int value : (bits / 8 + (bits % 8 != 0)) *
+  unsigned int value : (Bits / 8 + (Bits % 8 != 0 ? 1 : 0)) *
                        8;  // Set bitfield size to next multiple of 8
-  uintPacked(uint32_t value) : value{value} {}
+  UintPacked(uint32_t value) : value{value} {}
 } __attribute__((packed));
 #else
   /*
@@ -47,16 +47,16 @@ struct uintPacked
   template <int N = bits, typename std::enable_if<(N > 8 && N <= 16), int>::type = 0>
   static uint16_t DataSize();
   template <int N = bits, typename std::enable_if<(N > 16 && N <= 24), int>::type = 0>
-  static Internal::uint24_kt DataSize();
+  static internal::Uint24Kt DataSize();
   template <int N = bits, typename std::enable_if<(N > 24), int>::type = 0>
   static uint32_t DataSize();
   /***************************************************************************/
 
   decltype(DataSize()) value;
-  uintPacked(decltype(DataSize()) value) : value{value} {}
+  UintPacked(decltype(DataSize()) value) : value{value} {}
 };
 #endif
 
-}  // namespace Internal
+}  // namespace internal
 }  // namespace kt
-#endif  //_KT_UINTPACKED_H_
+#endif  // KT_UINTPACKED_H

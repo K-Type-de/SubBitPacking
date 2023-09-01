@@ -1,7 +1,7 @@
-#ifndef _KT_BITPACKED_H_
-#define _KT_BITPACKED_H_
+#ifndef KT_BITPACKED_H
+#define KT_BITPACKED_H
 
 #include "bitpacked/bitpackedarray.h"
 #include "bitpacked/bitpackedarrayiterator.h"
 
-#endif  //_KT_BITPACKED_H_
+#endif  // KT_BITPACKED_H

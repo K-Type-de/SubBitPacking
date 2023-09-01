@@ -1,8 +1,8 @@
-#ifndef _KT_SUBBITPACKEDARRAY_ITERATOR_H_
-#define _KT_SUBBITPACKEDARRAY_ITERATOR_H_
+#ifndef KT_SUBBITPACKEDARRAY_ITERATOR_H
+#define KT_SUBBITPACKEDARRAY_ITERATOR_H
 
-template <uint16_t num_states, std::size_t num_values>
-struct kt::SubBitPackedArray<num_states, num_values>::Iterator
+template <uint16_t NumStates, std::size_t NumValues>
+struct kt::SubBitPackedArray<NumStates, NumValues>::Iterator
 {
   using iterator_category = std::forward_iterator_tag;
   using value_type = PackedState;
@@ -21,13 +21,13 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
 
     for (size_t i = 0; i < chunk_value_index_; ++i)
     {
-      chunk_ /= num_states;
+      chunk_ /= NumStates;
     }
   }
 
   value_type operator*() const
   {
-    return chunk_ % num_states;
+    return chunk_ % NumStates;
   }
   value_type operator->() const
   {
@@ -44,7 +44,7 @@ struct kt::SubBitPackedArray<num_states, num_values>::Iterator
     }
     else
     {
-      chunk_ /= num_states;
+      chunk_ /= NumStates;
     }
     return *this;
   }
@@ -73,4 +73,4 @@ private:
   uint8_t chunk_value_index_;
 };
 
-#endif  // _KT_SUBBITPACKEDARRAY_ITERATOR_H_
+#endif  // KT_SUBBITPACKEDARRAY_ITERATOR_H

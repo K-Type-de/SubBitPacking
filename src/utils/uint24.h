@@ -1,51 +1,53 @@
-#ifndef _KT_UINT24_H_
-#define _KT_UINT24_H_
+#ifndef KT_UINT24_H
+#define KT_UINT24_H
 
 #include <cstdint>
 #include <cstring>
 
 namespace kt
 {
-namespace Internal
+namespace internal
 {
 
 enum class endian
 {
 #if defined(_MSC_VER) && !defined(__clang__)
-  little = 0,
-  big = 1,
-  native = little
+  kLittle = 0,
+  kBig = 1,
+  kNative = kLittle
 #else
-  little = __ORDER_LITTLE_ENDIAN__,
-  big = __ORDER_BIG_ENDIAN__,
-  native = __BYTE_ORDER__
+  kLittle = __ORDER_LITTLE_ENDIAN__,
+  kBig = __ORDER_BIG_ENDIAN__,
+  kNative = __BYTE_ORDER__
 #endif
 };
 
-class uint24_kt
+class Uint24Kt
 {
   uint8_t data_[3];
 
-  template <int N = endian::native == endian::big, typename std::enable_if<(N > 0), int>::type = 0>
+  template <int N = endian::kNative == endian::kBig,
+            typename std::enable_if<(N > 0), int>::type = 0>
   inline uint32_t get() const
   {
     return (data_[2] << 0) | (data_[1] << 8) | (data_[0] << 16);
   }
 
-  template <int N = endian::native == endian::little,
+  template <int N = endian::kNative == endian::kLittle,
             typename std::enable_if<(N > 0), int>::type = 0>
   inline typename std::enable_if<(N > 0), uint32_t>::type get() const
   {
     return (data_[0] << 0) | (data_[1] << 8) | (data_[2] << 16);
   }
 
-  template <int N = endian::native == endian::big, typename std::enable_if<(N > 0), int>::type = 0>
+  template <int N = endian::kNative == endian::kBig,
+            typename std::enable_if<(N > 0), int>::type = 0>
   inline void set(uint32_t value)
   {
     memcpy(data_, &reinterpret_cast<uint8_t *>(&value)[1], 3);
   }
 
-  template <int N = endian::native == endian::little,
+  template <int N = endian::kNative == endian::kLittle,
             typename std::enable_if<(N > 0), int>::type = 0>
   inline typename std::enable_if<(N > 0), void>::type set(uint32_t value)
   {
@@ -53,12 +55,12 @@ class uint24_kt
   }
 
 public:
-  uint24_kt(uint32_t value)
+  Uint24Kt(uint32_t value)
   {
     this->set(value);
   }
 
-  uint24_kt &operator=(uint32_t value)
+  Uint24Kt &operator=(uint32_t value)
   {
     this->set(value);
     return *this;
@@ -70,7 +72,7 @@ public:
   }
 };
 
-}  // namespace Internal
+}  // namespace internal
 }  // namespace kt
 
-#endif  //_KT_UINT24_H_
+#endif  // KT_UINT24_H

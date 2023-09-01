@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKEDSTRUCT_H_
-#define _KT_SUBBITPACKEDSTRUCT_H_
+#ifndef KT_SUBBITPACKEDSTRUCT_H
+#define KT_SUBBITPACKEDSTRUCT_H
 
 #include <stdarg.h>
 
@@ -15,10 +15,10 @@ namespace kt
 template <uint16_t... Ns>
 class SubBitPackedStruct : protected PackedStruct<Ns...>
 {
-  typedef PackedStruct<Ns...> Super;
-  typedef Internal::uintPacked<Super::kBitsUsed> uint_packed_t;
+  using Super = PackedStruct<Ns...>;
+  using uint_packed_t = internal::UintPacked<Super::kBitsUsed>;
 
-  uint_packed_t data_;
+  uint_packed_t data_ = {0};
 
   template <typename... States>
   void set(size_t index, PackedState state, States... other_states)
@@ -40,11 +40,11 @@ class SubBitPackedStruct : protected PackedStruct<Ns...>
   }
 
 public:
-  SubBitPackedStruct() : data_{0} {}
+  SubBitPackedStruct() = default;
   SubBitPackedStruct(const SubBitPackedStruct &other) : data_{other.data_} {}
 
   template <typename... State>
-  SubBitPackedStruct(State... states) : data_{0}
+  SubBitPackedStruct(State... states)
   {
     this->checkStateBoundries(sizeof...(states) ? sizeof...(states) - 1 : 0);
     this->initialValueCalculation(0, states...);
@@ -89,4 +89,4 @@ public:
 
 }  // namespace kt
 
-#endif  // _KT_SUBBITPACKEDSTRUCT_H_
+#endif  // KT_SUBBITPACKEDSTRUCT_H

@@ -1,8 +1,8 @@
-#ifndef _KT_SUPERBITPACKEDARRAY_ITERATOR_H_
-#define _KT_SUPERBITPACKEDARRAY_ITERATOR_H_
+#ifndef KT_SUPERBITPACKEDARRAY_ITERATOR_H
+#define KT_SUPERBITPACKEDARRAY_ITERATOR_H
 
-template <uint16_t num_states, std::size_t num_values>
-struct kt::SuperBitPackedArray<num_states, num_values>::Iterator
+template <uint16_t NumStates, std::size_t NumValues>
+struct kt::SuperBitPackedArray<NumStates, NumValues>::Iterator
 {
   using iterator_category = std::forward_iterator_tag;
   using value_type = PackedState;
@@ -46,4 +46,4 @@ private:
   uint32_t value_index_;
 };
 
-#endif  // _KT_SUPERBITPACKEDARRAY_ITERATOR_H_
+#endif  // KT_SUPERBITPACKEDARRAY_ITERATOR_H

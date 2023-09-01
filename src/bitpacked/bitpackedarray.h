@@ -1,5 +1,5 @@
-#ifndef _KT_BITPACKEDARRAY_H_
-#define _KT_BITPACKEDARRAY_H_
+#ifndef KT_BITPACKEDARRAY_H
+#define KT_BITPACKEDARRAY_H
 
 #include "../base/packedarray.h"
 #include "../utils/compiletime.h"
@@ -7,20 +7,21 @@
 
 namespace kt
 {
-template <uint16_t num_states, std::size_t num_values>
-class BitPackedArray : PackedStateArray<num_states, num_values>
+template <uint16_t NumStates, std::size_t NumValues>
+class BitPackedArray : PackedStateArray<NumStates, NumValues>
 {
-  static_assert(num_states > 1 && num_states < 65536,
+  static_assert(NumStates > 1 && NumStates < 65536,
                 "[BitPackedArray] Number of states must be between 2 and 65535");
 
 private:
-  static constexpr uint8_t kBitsPerState = CompileTime::NumberOfBitsPerValue(num_states - 1);
-  static constexpr uint16_t kBitMask = CompileTime::BitMaskForValue(num_states - 1);
+  static constexpr uint8_t kBitsPerState = compiletime::NumberOfBitsPerValue(NumStates - 1);
+  static constexpr uint16_t kBitMask = compiletime::BitMaskForValue(NumStates - 1);
 
   static constexpr std::size_t kEntrySize =
-      (num_values * kBitsPerState) / 32 +
-      ((num_values * kBitsPerState) % 32 !=
-       0);  // Add +1 array entry if it does not already fit perfectly
+      (NumValues * kBitsPerState) / 32 +
+      ((NumValues * kBitsPerState % 32 != 0)
+           ? 1  // Add +1 array entry if it does not already fit perfectly
+           : 0);
 
   uint32_t entries_[kEntrySize] = {0};
 
@@ -32,10 +33,10 @@ public:
   }
   Iterator end()
   {
-    return Iterator(*this, num_values);
+    return Iterator(*this, NumValues);
   }
 
-  BitPackedArray() {}
+  BitPackedArray() = default;
 
   PackedState get(std::size_t value_index) const override
   {
@@ -77,8 +78,6 @@ public:
     // Set new values
     this->entries_[entry_index] |= state << bit_index;
     this->entries_[entry_index + 1] |= (state >> (32 - bit_index));
-
-    return;
   }
 
   std::size_t getEntrySize() const override
@@ -96,4 +95,4 @@ public:
 
 }  // namespace kt
 
-#endif  //_KT_BITPACKEDARRAY_H_
+#endif  // KT_BITPACKEDARRAY_H

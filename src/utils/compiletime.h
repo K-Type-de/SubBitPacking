@@ -1,37 +1,37 @@
-#ifndef _KT_COMPILETIMEUTILS_H_
-#define _KT_COMPILETIMEUTILS_H_
+#ifndef KT_COMPILETIMEUTILS_H
+#define KT_COMPILETIMEUTILS_H
 
 #include <array>
 #include <cstdint>
 
 namespace kt
 {
-namespace CompileTime
+namespace compiletime
 {
 /*
  * Generator function to calculate normal powers
  */
-template <uint16_t base>
+template <uint16_t Base>
 constexpr uint32_t Pow(uint8_t exponent)
 {
-  return (exponent == 0) ? 1 : (base * Pow<base>(exponent - 1));
+  return (exponent == 0) ? 1 : (Base * Pow<Base>(exponent - 1));
 }
 /*****************************************************************************************/
 
 /*
  * Generator functions to calculate powers with shifting base
  */
-template <uint16_t base>
-constexpr uint32_t VariadicStatePow(uint8_t exponent)
+template <uint16_t Base>
+constexpr uint32_t VariadicStatePow(uint8_t /*exponent*/)
 {
   return 1;
 }
 
-template <uint16_t base, uint16_t... extra>
+template <uint16_t Base, uint16_t... Extra>
 constexpr auto VariadicStatePow(uint8_t exponent) ->
-    typename std::enable_if<sizeof...(extra) != 0, uint32_t>::type
+    typename std::enable_if<sizeof...(Extra) != 0, uint32_t>::type
 {
-  return (exponent == 0) ? 1 : base * VariadicStatePow<extra...>(exponent - 1);
+  return (exponent == 0) ? 1 : Base * VariadicStatePow<Extra...>(exponent - 1);
 }
 
 /*****************************************************************************************/
@@ -69,25 +69,25 @@ constexpr auto GeneratePowLut(Generator&& generator_function)
  * Calculate the highest possible number that the states of the variadic arguments cam be summed up
  * to
  */
-template <uint64_t prev, uint64_t current>
-constexpr uint64_t _HighestVariadicValue(uint64_t value, uint8_t exponent)
+template <uint64_t Prev, uint64_t Current>
+constexpr uint64_t HighestVariadicValueInternal(uint64_t value, uint8_t /*exponent*/)
 {
-  return value + (current - 1) * prev;
+  return value + (Current - 1) * Prev;
 }
 
-template <uint64_t prev, uint64_t current, uint64_t... others>
-constexpr auto _HighestVariadicValue(uint64_t value, uint8_t exponent) ->
-    typename std::enable_if<sizeof...(others) != 0, uint64_t>::type
+template <uint64_t Prev, uint64_t Current, uint64_t... Others>
+constexpr auto HighestVariadicValueInternal(uint64_t value, uint8_t exponent) ->
+    typename std::enable_if<sizeof...(Others) != 0, uint64_t>::type
 {
-  return _HighestVariadicValue<current * prev, others...>(value + (current - 1) * prev,
-                                                          exponent + 1);
+  return HighestVariadicValueInternal<Current * Prev, Others...>(value + (Current - 1) * Prev,
+                                                                 exponent + 1);
 }
 
-template <uint64_t current, uint64_t... others>
+template <uint64_t Current, uint64_t... Others>
 constexpr uint64_t HighestVariadicValue()
 {
-  return sizeof...(others) == 0 ? current - 1
-                                : _HighestVariadicValue<current, others...>(current - 1, 1);
+  return sizeof...(Others) == 0 ? Current - 1
+                                : HighestVariadicValueInternal<Current, Others...>(Current - 1, 1);
 }
 /*****************************************************************************************/
 
@@ -152,6 +152,6 @@ static constexpr uint8_t NumberOfUnusedUpperBits(T value, int8_t shift = sizeof(
          : ((value >> shift) & 0x1) == 0 ? 1 + NumberOfUnusedUpperBits(value, shift - 1)
                                          : 0;
 }
-}  // namespace CompileTime
+}  // namespace compiletime
 }  // namespace kt
-#endif  //_KT_COMPILETIMEUTILS_H_
+#endif  // KT_COMPILETIMEUTILS_H

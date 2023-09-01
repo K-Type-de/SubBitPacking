@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKEDSTRUCTBASE_H_
-#define _KT_SUBBITPACKEDSTRUCTBASE_H_
+#ifndef KT_SUBBITPACKEDSTRUCTBASE_H
+#define KT_SUBBITPACKEDSTRUCTBASE_H
 
 #ifdef KT_ENABLE_EXCEPTIONS
 #include <stdexcept>
@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-#include "utils/compiletime.h"
+#include "../utils/compiletime.h"
 
 namespace kt
 {
@@ -32,9 +32,9 @@ public:
   static constexpr std::size_t kNumFields = sizeof...(Ns);
   static constexpr std::array<uint32_t, kNumFields> kNumStates = {Ns...};
   static constexpr std::array<uint32_t, kNumFields> kStatePowers =
-      CompileTime::GeneratePowLut<kNumFields>(CompileTime::VariadicStatePow<Ns...>);
-  static constexpr uint8_t kBitsUsed = 64 - CompileTime::NumberOfUnusedUpperBits<uint64_t>(
-                                                CompileTime::HighestVariadicValue<Ns...>());
+      compiletime::GeneratePowLut<kNumFields>(compiletime::VariadicStatePow<Ns...>);
+  static constexpr uint8_t kBitsUsed = 64 - compiletime::NumberOfUnusedUpperBits<uint64_t>(
+                                                compiletime::HighestVariadicValue<Ns...>());
   static_assert(kBitsUsed <= 32, "[SubBitPackedStruct] Number of states exceed 32-bit limit");
 };
 
@@ -53,4 +53,4 @@ constexpr uint8_t PackedStruct<Ns...>::kBitsUsed;
 
 }  // namespace kt
 
-#endif  // _KT_SUBBITPACKEDSTRUCTBASE_H_
+#endif  // KT_SUBBITPACKEDSTRUCTBASE_H

@@ -1,5 +1,5 @@
-#ifndef _KT_PACKEDARRAY_H_
-#define _KT_PACKEDARRAY_H_
+#ifndef KT_PACKEDARRAY_H
+#define KT_PACKEDARRAY_H
 
 #ifdef KT_ENABLE_EXCEPTIONS
 #include <stdexcept>
@@ -12,14 +12,14 @@
 namespace kt
 {
 
-template <std::size_t num_values>
+template <std::size_t NumValues>
 class PackedArray
 {
 protected:
   inline void checkValueBoundries(std::size_t value_index) const
   {
 #ifdef KT_ENABLE_EXCEPTIONS
-    if (value_index >= num_values)
+    if (value_index >= NumValues)
     {
       throw std::out_of_range{"[PackedArray] Value index out of range"};
     }
@@ -27,10 +27,10 @@ protected:
   }
 };
 
-template <uint16_t num_states, std::size_t num_values>
-class PackedStateArray : public PackedArray<num_values>
+template <uint16_t NumStates, std::size_t NumValues>
+class PackedStateArray : public PackedArray<NumValues>
 {
-  static_assert(num_states > 1 && num_states < 65536,
+  static_assert(NumStates > 1 && NumStates < 65536,
                 "[PackedStateArray] Number of states must be between 2 and 65535");
 
 protected:
@@ -43,8 +43,8 @@ public:
   virtual std::size_t getByteSize() const = 0;
 };
 
-template <std::size_t num_structs>
-class PackedStructArray : public PackedArray<num_structs>
+template <std::size_t NumStructs>
+class PackedStructArray : public PackedArray<NumStructs>
 {
 protected:
   PackedStructArray() {}
@@ -57,4 +57,4 @@ public:
 };
 
 }  // namespace kt
-#endif  //_KT_PACKEDARRAY_H_
+#endif  // KT_PACKEDARRAY_H

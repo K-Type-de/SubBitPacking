@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKEDDATA_H_
-#define _KT_SUBBITPACKEDDATA_H_
+#ifndef KT_SUBBITPACKEDDATA_H
+#define KT_SUBBITPACKEDDATA_H
 
 #include <cstdint>
 
@@ -32,4 +32,4 @@ public:
 
 }  // namespace kt
 
-#endif  //_KT_SUBBITPACKEDDATA_H_
+#endif  // KT_SUBBITPACKEDDATA_H

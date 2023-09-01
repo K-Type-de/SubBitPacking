@@ -21,7 +21,7 @@ TYPED_TEST(SubBitPackedArrayNoExceptionTest, NoExceptionTest)
 
   // Avoid undefined behavior when accessing the array out of limits
   uint8_t buf[sizeof(SubBitPackedArray<num_states, accesses>)];
-  auto array_ptr = new (buf) SubBitPackedArray<num_states, values>{};
+  auto *array_ptr = new (buf) SubBitPackedArray<num_states, values>{};
 
   for (int i = 0; i < accesses; ++i)
   {

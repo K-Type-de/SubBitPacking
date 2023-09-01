@@ -117,7 +117,7 @@ TEST(SuperBitStructArrayTest, ExceptionTestFetchEntries)
   // Avoid undefined behavior when acessing array entries or state values out of range
   uint8_t buf[sizeof(
       SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>, loop_size>)];
-  auto array_ptr =
+  auto *array_ptr =
       new (buf) SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
 
   size_t num_state_values = array_ptr->getEntryCopy(0).getNumberOfValues();
@@ -162,7 +162,7 @@ TEST(SuperBitStructArrayTest, ExceptionTestDirectAccess)
   // Avoid undefined behavior when acessing array entries or state values out of range
   uint8_t buf[sizeof(
       SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>, loop_size>)];
-  auto array_ptr =
+  auto *array_ptr =
       new (buf) SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
 
   size_t num_state_values = array_ptr->getEntryCopy(0).getNumberOfValues();
