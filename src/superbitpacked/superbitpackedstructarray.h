@@ -10,8 +10,8 @@
 
 namespace kt
 {
-template <typename StructEntry, std::size_t num_entries>
-class SuperBitPackedStructArray : public PackedStructArray<num_entries>
+template <typename StructEntry, std::size_t num_structs>
+class SuperBitPackedStructArray : public PackedStructArray<num_structs>
 {
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
@@ -22,8 +22,8 @@ class SuperBitPackedStructArray : public PackedStructArray<num_entries>
                 "\"SubBitPackedStructArray\" instead");
 
   static constexpr std::size_t kEntrySize =
-      (num_entries * kBitsPerEntry) / 32 +
-      ((num_entries * kBitsPerEntry) % 32 !=
+      (num_structs * kBitsPerEntry) / 32 +
+      ((num_structs * kBitsPerEntry) % 32 !=
        0);  // Add +1 array entry if it does not already fit perfectly
 
   uint32_t storage_[kEntrySize];
@@ -89,7 +89,7 @@ public:
   }
   Iterator end()
   {
-    return Iterator(*this, num_entries);
+    return Iterator(*this, num_structs);
   }
 
   inline StructEntry getEntryCopy(std::size_t entry_index) const
