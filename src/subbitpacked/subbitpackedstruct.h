@@ -71,6 +71,11 @@ public:
                           state);
   }
 
+  std::size_t getNumberOfValues() const
+  {
+    return Super::kNumFields;
+  }
+
   std::size_t getDataSize() const
   {
     return sizeof(this->data_) * 8;

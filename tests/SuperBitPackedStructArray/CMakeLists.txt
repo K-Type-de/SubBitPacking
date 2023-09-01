@@ -15,4 +15,16 @@ target_link_libraries(
 
 target_compile_definitions(SuperBitPackedStructArrayTest PRIVATE KT_ENABLE_EXCEPTIONS)
 
+add_executable(
+  SuperBitPackedStructArrayNoExceptionTest
+  superbitpackedstructarray_test.cpp
+)
+
+target_link_libraries(
+  SuperBitPackedStructArrayNoExceptionTest
+  GTest::gtest_main
+)
+
+
 gtest_discover_tests(SuperBitPackedStructArrayTest)
+gtest_discover_tests(SuperBitPackedStructArrayNoExceptionTest)

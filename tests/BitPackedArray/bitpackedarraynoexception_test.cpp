@@ -1,25 +1,26 @@
 #include <gtest/gtest.h>
+#include <math.h>
 
 #include "../test_sizes.h"
-#include "superbitpacked.h"
+#include "bitpacked.h"
 
 using namespace kt;
 
 template <typename T>
-class SuperBitPackedArrayNoExceptionsTest : public ::testing::Test
+class BitPackedArrayNoExceptionTest : public ::testing::Test
 {
 };
 
-TYPED_TEST_SUITE(SuperBitPackedArrayNoExceptionsTest, test_state_sizes);
+TYPED_TEST_SUITE(BitPackedArrayNoExceptionTest, test_state_sizes);
 
 // Tests that no exceptions are thrown
-TYPED_TEST(SuperBitPackedArrayNoExceptionsTest, NoExceptionTest)
+TYPED_TEST(BitPackedArrayNoExceptionTest, NoExceptionTest)
 {
   static constexpr auto num_states = TypeParam::value;
   static constexpr uint32_t values = 1000;
   uint32_t accesses = 2000;
 
-  SuperBitPackedArray<num_states, values> array{};
+  BitPackedArray<num_states, values> array{};
 
   for (int i = 0; i < accesses; ++i)
   {
@@ -33,6 +34,6 @@ TYPED_TEST(SuperBitPackedArrayNoExceptionsTest, NoExceptionTest)
       caught = true;
     }
 
-    EXPECT_EQ(caught, false) << "Index: " << i;
+    EXPECT_FALSE(caught) << "Index: " << i;
   }
 }
