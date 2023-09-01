@@ -96,15 +96,19 @@ TEST(SubBitStructTest, SizeTest)
 TEST(SubBitStructTest, ExceptionTest)
 {
   // Tests if exceptions are thrown when accessing states out of range
-  SubBitPackedStruct<1, 2, 3, 4> packed_struct;
-  size_t num_values = packed_struct.getNumberOfValues();
+
+  // Avoid undefined behavior when acessing state values out of range
+  uint8_t buf[sizeof(SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>)];
+  auto packed_struct_ptr = new (buf) SubBitPackedStruct<1, 2, 3, 4>{};
+
+  size_t num_values = packed_struct_ptr->getNumberOfValues();
 
   for (int i = 0; i < num_values * 2; ++i)
   {
     bool caught = false;
     try
     {
-      packed_struct.get(i);
+      packed_struct_ptr->get(i);
     }
     catch (std::out_of_range)
     {

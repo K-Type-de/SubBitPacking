@@ -23,7 +23,7 @@ jobs:
         run: cmake --build build
       - name: Test BitPackedArrayTest
         run: build/BitPackedArrayTest
-      - name: Test BitPackedArrayTest
+      - name: Test BitPackedArrayNoExceptionTest
         run: build/BitPackedArrayNoExceptionTest
 
       # SubBitPackedArray Tests
