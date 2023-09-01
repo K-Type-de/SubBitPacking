@@ -94,7 +94,7 @@ TEST(SuperBitStructArrayTest, StructArrayIteratorTest)
   }
 
   size_t index = 0;
-  for (const auto& super_bit_packed_struct : array)
+  for (const auto &super_bit_packed_struct : array)
   {
     PackedState ret_state_0 = super_bit_packed_struct.get(0);
     PackedState ret_state_1 = super_bit_packed_struct.get(1);
@@ -114,8 +114,13 @@ TEST(SuperBitStructArrayTest, ExceptionTestFetchEntries)
   constexpr std::size_t array_size = 10000;
   constexpr std::size_t loop_size = array_size * 2;
 
-  SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size> array;
-  size_t num_state_values = array.getEntry(0).getNumberOfValues();
+  // Avoid undefined behavior when acessing array entries or state values out of range
+  uint8_t buf[sizeof(
+      SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>, loop_size>)];
+  auto array_ptr =
+      new (buf) SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
+
+  size_t num_state_values = array_ptr->getEntry(0).getNumberOfValues();
 
   for (size_t i = 0; i < loop_size; ++i)
   {
@@ -123,7 +128,7 @@ TEST(SuperBitStructArrayTest, ExceptionTestFetchEntries)
 
     try
     {
-      auto entry = array.getEntry(i);
+      auto entry = array_ptr->getEntry(i);
 
       for (size_t j = 0; j < num_state_values * 2; ++j)
       {
@@ -154,8 +159,13 @@ TEST(SuperBitStructArrayTest, ExceptionTestDirectAccess)
   constexpr std::size_t array_size = 10000;
   constexpr std::size_t loop_size = array_size * 2;
 
-  SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size> array;
-  size_t num_state_values = array.getEntry(0).getNumberOfValues();
+  // Avoid undefined behavior when acessing array entries or state values out of range
+  uint8_t buf[sizeof(
+      SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>, loop_size>)];
+  auto array_ptr =
+      new (buf) SuperBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
+
+  size_t num_state_values = array_ptr->getEntry(0).getNumberOfValues();
 
   for (size_t i = 0; i < loop_size; ++i)
   {
@@ -165,7 +175,7 @@ TEST(SuperBitStructArrayTest, ExceptionTestDirectAccess)
     {
       try
       {
-        array.get(i, j);
+        array_ptr->get(i, j);
       }
       catch (std::out_of_range)
       {
