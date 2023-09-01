@@ -1,5 +1,5 @@
-#ifndef _KT_TEST_SIZES_SHORT_H_
-#define _KT_TEST_SIZES_SHORT_H_
+#ifndef KT_TEST_SIZES_SHORT_H
+#define KT_TEST_SIZES_SHORT_H
 
 #ifdef TEST_SIZES_SHORT
 using test_state_sizes =
@@ -55,4 +55,4 @@ using test_state_sizes =
                      std::integral_constant<uint16_t, 65535>>;
 #endif
 
-#endif  //_KT_TEST_SIZES_SHORT_H_
+#endif  // KT_TEST_SIZES_SHORT_H

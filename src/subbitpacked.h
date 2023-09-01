@@ -1,9 +1,9 @@
-#ifndef _KT_SUBBITPACKED_H_
-#define _KT_SUBBITPACKED_H_
+#ifndef KT_SUBBITPACKED_H
+#define KT_SUBBITPACKED_H
 
 #include "subbitpacked/subbitpackedarray.h"
 #include "subbitpacked/subbitpackedarrayiterator.h"
 #include "subbitpacked/subbitpackedstruct.h"
 #include "subbitpacked/subbitpackedstructarray.h"
 
-#endif  //_KT_SUBBITPACKED_H_
+#endif  // KT_SUBBITPACKED_H

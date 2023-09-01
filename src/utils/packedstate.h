@@ -1,13 +1,13 @@
-#ifndef _KT_PACKEDSTATE_H
-#define _KT_PACKEDSTATE_H
+#ifndef KT_PACKEDSTATE_H
+#define KT_PACKEDSTATE_H
 
 #include <cstdint>
 
 namespace kt
 {
 
-typedef uint16_t PackedState;
+using PackedState = uint16_t;
 
 };
 
-#endif  //_KT_PACKEDSTATE_H
+#endif  // KT_PACKEDSTATE_H

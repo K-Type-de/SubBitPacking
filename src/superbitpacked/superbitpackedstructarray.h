@@ -1,17 +1,17 @@
-#ifndef _KT_SUPERBITPACKEDSTRUCTARRAY_H_
-#define _KT_SUPERBITPACKEDSTRUCTARRAY_H_
+#ifndef KT_SUPERBITPACKEDSTRUCTARRAY_H
+#define KT_SUPERBITPACKEDSTRUCTARRAY_H
 
 #include <cstdint>
 
 #include "../base/packedarray.h"
 #include "../subbitpacked/subbitpackedstruct.h"
 #include "../utils/packedstate.h"
-#include "utils/superbitpackedarrayentrymetadata.h"
+#include "../utils/superbitpackedarrayentrymetadata.h"
 
 namespace kt
 {
-template <typename StructEntry, std::size_t num_structs>
-class SuperBitPackedStructArray : public PackedStructArray<num_structs>
+template <typename StructEntry, std::size_t NumStructs>
+class SuperBitPackedStructArray : public PackedStructArray<NumStructs>
 {
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
@@ -22,13 +22,14 @@ class SuperBitPackedStructArray : public PackedStructArray<num_structs>
                 "\"SubBitPackedStructArray\" instead");
 
   static constexpr std::size_t kEntrySize =
-      (num_structs * kBitsPerEntry) / 32 +
-      ((num_structs * kBitsPerEntry) % 32 !=
-       0);  // Add +1 array entry if it does not already fit perfectly
+      (NumStructs * kBitsPerEntry) / 32 +
+      (((NumStructs * kBitsPerEntry) % 32 != 0)
+           ? 1  // Add +1 array entry if it does not already fit perfectly
+           : 0);
 
   uint32_t storage_[kEntrySize];
 
-  inline Internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t entry_index) const
+  inline internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t entry_index) const
   {
     const std::size_t bit_address = (entry_index * 32) - (entry_index * kExtraBitsPerWord);
     const std::size_t start_index = bit_address / 32;
@@ -37,7 +38,7 @@ class SuperBitPackedStructArray : public PackedStructArray<num_structs>
     return {start_index, bit_shift};
   }
 
-  inline StructEntry _getEntry(std::size_t start_index, std::size_t bit_shift) const
+  inline StructEntry getEntryInternal(std::size_t start_index, std::size_t bit_shift) const
   {
     if (!bit_shift)
     {
@@ -58,7 +59,7 @@ class SuperBitPackedStructArray : public PackedStructArray<num_structs>
     return static_cast<StructEntry>(combined_entry);
   }
 
-  inline void _setEntry(std::size_t start_index, std::size_t bit_shift, StructEntry entry)
+  inline void setEntryInternal(std::size_t start_index, std::size_t bit_shift, StructEntry entry)
   {
     if (!bit_shift)
     {
@@ -89,21 +90,21 @@ public:
   }
   Iterator end()
   {
-    return Iterator(*this, num_structs);
+    return Iterator(*this, NumStructs);
   }
 
   inline StructEntry getEntryCopy(std::size_t entry_index) const
   {
     this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
-    return this->_getEntry(metadata.start_index, metadata.bit_shift);
+    return this->getEntryInternal(metadata.start_index, metadata.bit_shift);
   }
 
   inline PackedState get(std::size_t entry_index, std::size_t state_index) const override
   {
     this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
-    const StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
+    const StructEntry entry = this->getEntryInternal(metadata.start_index, metadata.bit_shift);
 
     return entry.get(state_index);
   }
@@ -112,11 +113,11 @@ public:
   {
     this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
-    StructEntry entry = this->_getEntry(metadata.start_index, metadata.bit_shift);
+    StructEntry entry = this->getEntryInternal(metadata.start_index, metadata.bit_shift);
 
     entry.set(state_index, state);
 
-    this->_setEntry(metadata.start_index, metadata.bit_shift, entry);
+    this->setEntryInternal(metadata.start_index, metadata.bit_shift, entry);
   }
 
   std::size_t getEntrySize() const override
@@ -134,4 +135,4 @@ public:
 
 }  // namespace kt
 
-#endif  // _KT_SUPERBITPACKEDSTRUCTARRAY_H_
+#endif  // KT_SUPERBITPACKEDSTRUCTARRAY_H

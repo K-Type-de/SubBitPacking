@@ -1,29 +1,29 @@
-#ifndef _KT_SUBBITPACKEDARRAY_H_
-#define _KT_SUBBITPACKEDARRAY_H_
+#ifndef KT_SUBBITPACKEDARRAY_H
+#define KT_SUBBITPACKEDARRAY_H
 
 #include "../base/packedarray.h"
 #include "../utils/compiletime.h"
 #include "../utils/packedstate.h"
 #include "../utils/subbitpackeddata.h"
 
-
 namespace kt
 {
-template <uint16_t num_states, std::size_t num_values>
-class SubBitPackedArray : public PackedStateArray<num_states, num_values>
+template <uint16_t NumStates, std::size_t NumValues>
+class SubBitPackedArray : public PackedStateArray<NumStates, NumValues>
 {
 private:
   static constexpr uint8_t kStatesPer4ByteWord =
-      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
+      compiletime::NumberOfStatesPer4ByteSubBitPackedWord(NumStates);
 
   static constexpr std::size_t kEntrySize =
-      num_values / kStatesPer4ByteWord +
-      (num_values % kStatesPer4ByteWord !=
-       0);  // Add +1 array entry if it does not already fit perfectly
+      NumValues / kStatesPer4ByteWord +
+      ((NumValues % kStatesPer4ByteWord != 0)
+           ? 1  // Add +1 array entry if it does not already fit perfectly
+           : 0);
 
   // Calculate power lookup table at compile time
   static constexpr std::array<uint32_t, kStatesPer4ByteWord> kPowerLookupTable =
-      CompileTime::GeneratePowLut<kStatesPer4ByteWord>(CompileTime::Pow<num_states>);
+      compiletime::GeneratePowLut<kStatesPer4ByteWord>(compiletime::Pow<NumStates>);
 
   uint32_t entries_[kEntrySize] = {0};
 
@@ -35,10 +35,10 @@ public:
   }
   Iterator end()
   {
-    return Iterator(*this, num_values);
+    return Iterator(*this, NumValues);
   }
 
-  SubBitPackedArray() {}
+  SubBitPackedArray() = default;
 
   PackedState get(std::size_t value_index) const override
   {
@@ -47,7 +47,7 @@ public:
 
     return SubBitPackedData::Get(this->entries_[entry_index],
                                  this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
-                                 num_states);
+                                 NumStates);
   }
 
   void set(std::size_t value_index, PackedState state) override
@@ -56,8 +56,8 @@ public:
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
 
     SubBitPackedData::Set(this->entries_[entry_index],
-                          this->kPowerLookupTable[value_index % kStatesPer4ByteWord], num_states,
-                          state % num_states);
+                          this->kPowerLookupTable[value_index % kStatesPer4ByteWord], NumStates,
+                          state % NumStates);
   }
 
   std::size_t getEntrySize() const override
@@ -72,12 +72,12 @@ public:
 };
 
 // Needed for C++11 linkage
-template <uint16_t num_states, std::size_t num_values>
-constexpr std::array<uint32_t, SubBitPackedArray<num_states, num_values>::kStatesPer4ByteWord>
-    SubBitPackedArray<num_states, num_values>::kPowerLookupTable;
+template <uint16_t NumStates, std::size_t NumValues>
+constexpr std::array<uint32_t, SubBitPackedArray<NumStates, NumValues>::kStatesPer4ByteWord>
+    SubBitPackedArray<NumStates, NumValues>::kPowerLookupTable;
 
 #include "subbitpackedarrayiterator.h"
 
 }  // namespace kt
 
-#endif  //_KT_SUBBITPACKEDARRAY_H_
+#endif  // KT_SUBBITPACKEDARRAY_H

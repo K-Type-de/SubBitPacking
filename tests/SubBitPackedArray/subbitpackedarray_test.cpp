@@ -17,7 +17,7 @@ TYPED_TEST_SUITE(SubBitPackedArrayTest, test_state_sizes);
 TYPED_TEST(SubBitPackedArrayTest, NumberOfStatesPerEntryTest)
 {
   static constexpr auto num_states = TypeParam::value;
-  uint8_t states_per_4_byte_word = CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
+  uint8_t states_per_4_byte_word = compiletime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
   uint8_t states_per_4_byte_word_calculated = sizeof(uint32_t) * 8 / (log(num_states) / log(2));
 
   EXPECT_EQ(states_per_4_byte_word, states_per_4_byte_word_calculated);
@@ -29,7 +29,7 @@ TYPED_TEST(SubBitPackedArrayTest, MinEntrySizeTest)
 {
   static constexpr auto num_states = TypeParam::value;
   static constexpr uint8_t states_per_4_byte_word =
-      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
+      compiletime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
 
   SubBitPackedArray<num_states, states_per_4_byte_word> one_entry_array{};
   EXPECT_EQ(one_entry_array.getEntrySize(), 1);
@@ -136,7 +136,7 @@ TYPED_TEST(SubBitPackedArrayTest, ExceptionTest)
 
   // Avoid undefined behavior when accessing the array out of limits
   uint8_t buf[sizeof(SubBitPackedArray<num_states, accesses>)];
-  auto array_ptr = new (buf) SubBitPackedArray<num_states, values>{};
+  auto *array_ptr = new (buf) SubBitPackedArray<num_states, values>{};
 
   for (int i = 0; i < accesses; ++i)
   {

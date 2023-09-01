@@ -21,12 +21,12 @@ TYPED_TEST(SuperBitPackedArrayTest, SizeTest)
   SuperBitPackedArray<num_states, num_values> array{};
 
   uint8_t number_of_states_per_word =
-      CompileTime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
+      compiletime::NumberOfStatesPer4ByteSubBitPackedWord(num_states);
   std::size_t number_of_entries =
       num_values / number_of_states_per_word + (num_values % number_of_states_per_word != 0);
 
-  uint8_t extra_bits_per_word = CompileTime::NumberOfUnusedUpperBits<uint32_t>(
-      CompileTime::Pow<num_states>(number_of_states_per_word) - 1);
+  uint8_t extra_bits_per_word = compiletime::NumberOfUnusedUpperBits<uint32_t>(
+      compiletime::Pow<num_states>(number_of_states_per_word) - 1);
 
   EXPECT_EQ(array.getNumberOfEntries(), number_of_entries);
 
@@ -95,7 +95,7 @@ TYPED_TEST(SuperBitPackedArrayTest, ExceptionTest)
 
   // Avoid undefined behavior when accessing the array out of limits
   uint8_t buf[sizeof(SuperBitPackedArray<num_states, accesses>)];
-  auto array_ptr = new (buf) SuperBitPackedArray<num_states, values>{};
+  auto *array_ptr = new (buf) SuperBitPackedArray<num_states, values>{};
 
   for (int i = 0; i < accesses; ++i)
   {

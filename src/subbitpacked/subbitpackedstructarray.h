@@ -1,5 +1,5 @@
-#ifndef _KT_SUBBITPACKEDSTRUCTARRAY_H_
-#define _KT_SUBBITPACKEDSTRUCTARRAY_H_
+#ifndef KT_SUBBITPACKEDSTRUCTARRAY_H
+#define KT_SUBBITPACKEDSTRUCTARRAY_H
 
 #include <cstdint>
 
@@ -10,10 +10,10 @@
 namespace kt
 {
 
-template <typename StructEntry, std::size_t num_entries>
-class SubBitPackedStructArray : public PackedStructArray<num_entries>
+template <typename StructEntry, std::size_t NumEntries>
+class SubBitPackedStructArray : public PackedStructArray<NumEntries>
 {
-  StructEntry entries_[num_entries];
+  StructEntry entries_[NumEntries];
 
 public:
   struct Iterator;
@@ -23,7 +23,7 @@ public:
   }
   Iterator end()
   {
-    return Iterator(*this, num_entries);
+    return Iterator(*this, NumEntries);
   }
 
   inline StructEntry &getEntry(std::size_t entry_index)
@@ -51,12 +51,12 @@ public:
 
   std::size_t getEntrySize() const override
   {
-    return num_entries;
+    return NumEntries;
   }
 
   std::size_t getByteSize() const override
   {
-    return num_entries * sizeof(StructEntry);
+    return NumEntries * sizeof(StructEntry);
   }
 };
 
@@ -64,4 +64,4 @@ public:
 
 }  // namespace kt
 
-#endif  // _KT_SUBBITPACKEDSTRUCTARRAY_H_
+#endif  // KT_SUBBITPACKEDSTRUCTARRAY_H

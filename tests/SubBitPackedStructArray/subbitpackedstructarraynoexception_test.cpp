@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../Mock/subbitpackeddata_mock.h"
+#include "../mock/subbitpackeddata_mock.h"
 #include "subbitpacked.h"
 
 using namespace kt;
@@ -13,7 +13,8 @@ TEST(SubBitStructArrayTest, NoExceptionTestFetchEntries)
   // Avoid undefined behavior when acessing array entries or state values out of range
   uint8_t buf[sizeof(
       SubBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>, loop_size>)];
-  auto array_ptr = new (buf) SubBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
+  auto *array_ptr =
+      new (buf) SubBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
 
   size_t num_state_values = array_ptr->getEntry(0).getNumberOfValues();
 
@@ -56,7 +57,8 @@ TEST(SubBitStructArrayTest, ExceptionTestDirectAccess)
   // Avoid undefined behavior when acessing array entries or state values out of range
   uint8_t buf[sizeof(
       SubBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>, loop_size>)];
-  auto array_ptr = new (buf) SubBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
+  auto *array_ptr =
+      new (buf) SubBitPackedStructArray<SubBitPackedStruct<1, 2, 3, 4>, array_size>{};
 
   size_t num_state_values = array_ptr->getEntry(0).getNumberOfValues();
 
