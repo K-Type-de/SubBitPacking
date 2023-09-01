@@ -23,6 +23,8 @@ jobs:
         run: cmake --build build
       - name: Test BitPackedArrayTest
         run: build/BitPackedArrayTest
+      - name: Test BitPackedArrayTest
+        run: build/BitPackedArrayNoExceptionTest
 
       # SubBitPackedArray Tests
       - name: clear build dir
@@ -33,8 +35,8 @@ jobs:
         run: cmake --build build
       - name: Test SubBitPackedArrayTest
         run: build/SubBitPackedArrayTest
-      - name: Test SubBitPackedArrayNoExceptionsTest
-        run: build/SubBitPackedArrayNoExceptionsTest
+      - name: Test SubBitPackedArrayNoExceptionTest
+        run: build/SubBitPackedArrayNoExceptionTest
 
       # SuperBitPackedArray Tests
       - name: clear build dir
@@ -45,8 +47,8 @@ jobs:
         run: cmake --build build
       - name: Test SuperBitPackedArrayTest
         run: build/SuperBitPackedArrayTest
-      - name: Test SuperBitPackedArrayNoExceptionsTest
-        run: build/SuperBitPackedArrayNoExceptionsTest
+      - name: Test SuperBitPackedArrayNoExceptionTest
+        run: build/SuperBitPackedArrayNoExceptionTest
 
       # SubBitPackedStruct Tests
       - name: clear build dir
@@ -57,6 +59,8 @@ jobs:
         run: cmake --build build
       - name: Test SubBitPackedStructTest
         run: build/SubBitPackedStructTest
+      - name: Test SubBitPackedStructNoExceptionTest
+        run: build/SubBitPackedStructNoExceptionTest
 
       # SubBitPackedStructArray Tests
       - name: clear build dir
@@ -67,6 +71,8 @@ jobs:
         run: cmake --build build
       - name: Test SubBitPackedStructArrayTest
         run: build/SubBitPackedStructArrayTest
+      - name: Test SubBitPackedStructArrayNoExceptionTest
+        run: build/SubBitPackedStructArrayNoExceptionTest
 
       ## SuperBitPackedStructArray Tests
       - name: clear build dir
@@ -77,3 +83,5 @@ jobs:
         run: cmake --build build
       - name: Test SuperBitPackedStructArrayTest
         run: build/SuperBitPackedStructArrayTest
+      - name: Test SuperBitPackedStructArrayNoExceptionTest
+        run: build/SuperBitPackedStructArrayNoExceptionTest

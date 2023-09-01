@@ -14,8 +14,6 @@ const char *Compiler = "MSVC";
 const char *Compiler = "OTHER";
 #endif
 
-#include <iostream>
-
 TEST(SubBitStructTest, StructTest)
 {
   constexpr uint8_t state_num_0 = 3;
@@ -93,4 +91,26 @@ TEST(SubBitStructTest, SizeTest)
 
   EXPECT_EQ(struct_31_bit.GetBitsUsed(), 31) << "Compiler: " << Compiler;
   EXPECT_EQ(struct_31_bit.getDataSize(), 32) << "Compiler: " << Compiler;
+}
+
+TEST(SubBitStructTest, ExceptionTest)
+{
+  // Tests if exceptions are thrown when accessing states out of range
+  SubBitPackedStruct<1, 2, 3, 4> packed_struct;
+  size_t num_values = packed_struct.getNumberOfValues();
+
+  for (int i = 0; i < num_values * 2; ++i)
+  {
+    bool caught = false;
+    try
+    {
+      packed_struct.get(i);
+    }
+    catch (std::out_of_range)
+    {
+      caught = true;
+    }
+
+    EXPECT_EQ(caught, i >= num_values);
+  }
 }

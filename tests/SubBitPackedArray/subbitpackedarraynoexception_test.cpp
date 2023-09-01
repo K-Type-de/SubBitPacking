@@ -6,14 +6,14 @@
 using namespace kt;
 
 template <typename T>
-class SubBitPackedArrayNoExceptionsTest : public ::testing::Test
+class SubBitPackedArrayNoExceptionTest : public ::testing::Test
 {
 };
 
-TYPED_TEST_SUITE(SubBitPackedArrayNoExceptionsTest, test_state_sizes);
+TYPED_TEST_SUITE(SubBitPackedArrayNoExceptionTest, test_state_sizes);
 
 // Tests that no exceptions are thrown
-TYPED_TEST(SubBitPackedArrayNoExceptionsTest, NoExceptionTest)
+TYPED_TEST(SubBitPackedArrayNoExceptionTest, NoExceptionTest)
 {
   static constexpr auto num_states = TypeParam::value;
   static constexpr uint32_t values = 1000;
@@ -33,6 +33,6 @@ TYPED_TEST(SubBitPackedArrayNoExceptionsTest, NoExceptionTest)
       caught = true;
     }
 
-    EXPECT_EQ(caught, false) << "Index: " << i;
+    EXPECT_FALSE(caught) << "Index: " << i;
   }
 }

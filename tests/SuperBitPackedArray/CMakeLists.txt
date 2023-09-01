@@ -16,17 +16,16 @@ target_link_libraries(
 target_compile_definitions(SuperBitPackedArrayTest PRIVATE KT_ENABLE_EXCEPTIONS)
 
 add_executable(
-  SuperBitPackedArrayNoExceptionsTest
-  superbitpackedarraynoexceptions_test.cpp
+  SuperBitPackedArrayNoExceptionTest
+  superbitpackedarraynoexception_test.cpp
 )
 
 target_link_libraries(
-  SuperBitPackedArrayNoExceptionsTest
+  SuperBitPackedArrayNoExceptionTest
   GTest::gtest_main
 )
 
-target_compile_definitions(SuperBitPackedArrayNoExceptionsTest PRIVATE TEST_SIZES_SHORT)
+target_compile_definitions(SuperBitPackedArrayNoExceptionTest PRIVATE TEST_SIZES_SHORT)
 
 gtest_discover_tests(SuperBitPackedArrayTest)
-gtest_discover_tests(SuperBitPackedArrayNoExceptionsTest)
-
+gtest_discover_tests(SuperBitPackedArrayNoExceptionTest)

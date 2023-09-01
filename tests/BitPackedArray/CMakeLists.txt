@@ -16,16 +16,16 @@ target_link_libraries(
 target_compile_definitions(BitPackedArrayTest PRIVATE KT_ENABLE_EXCEPTIONS)
 
 add_executable(
-  BitPackedArrayNoExceptionsTest
-  bitpackedarraynoexceptions_test.cpp
+  BitPackedArrayNoExceptionTest
+  bitpackedarraynoexception_test.cpp
 )
 
 target_link_libraries(
-  BitPackedArrayNoExceptionsTest
+  BitPackedArrayNoExceptionTest
   GTest::gtest_main
 )
 
-target_compile_definitions(BitPackedArrayNoExceptionsTest PRIVATE TEST_SIZES_SHORT)
+target_compile_definitions(BitPackedArrayNoExceptionTest PRIVATE TEST_SIZES_SHORT)
 
 gtest_discover_tests(BitPackedArrayTest)
-
+gtest_discover_tests(BitPackedArrayNoExceptionTest)
