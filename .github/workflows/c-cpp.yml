@@ -13,6 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: seanmiddleditch/gha-setup-ninja@master
+      - uses: DoozyX/clang-format-lint-action@v0.16.2
+        with:
+          source: "."
+          extensions: "h,hpp,cpp"
+          clangFormatVersion: 16
 
       # BitPackedArray Tests
       - name: create build dir
