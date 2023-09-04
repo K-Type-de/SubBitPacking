@@ -1,6 +1,8 @@
 #ifndef KT_SUPERBITPACKEDARRAYENTRYMETADATA_
 #define KT_SUPERBITPACKEDARRAYENTRYMETADATA_
 
+#include <cstddef>
+
 namespace kt
 {
 namespace internal

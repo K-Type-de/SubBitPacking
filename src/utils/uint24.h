@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <type_traits>
 
 namespace kt
 {
@@ -55,7 +56,7 @@ class Uint24Kt
   }
 
 public:
-  Uint24Kt(uint32_t value)
+  explicit Uint24Kt(uint32_t value)
   {
     this->set(value);
   }
@@ -66,6 +67,8 @@ public:
     return *this;
   }
 
+  // Explicitly allow implicit conversion operator calls
+  // NOLINTNEXTLINE
   operator uint32_t() const
   {
     return this->get();

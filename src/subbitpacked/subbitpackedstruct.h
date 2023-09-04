@@ -18,7 +18,7 @@ class SubBitPackedStruct : protected PackedStruct<Ns...>
   using Super = PackedStruct<Ns...>;
   using uint_packed_t = internal::UintPacked<Super::kBitsUsed>;
 
-  uint_packed_t data_ = {0};
+  uint_packed_t data_{0};
 
   template <typename... States>
   void set(std::size_t index, PackedState state, States... other_states)
@@ -44,7 +44,7 @@ public:
   SubBitPackedStruct(const SubBitPackedStruct &other) : data_{other.data_} {}
 
   template <typename... State>
-  SubBitPackedStruct(State... states)
+  explicit SubBitPackedStruct(State... states)
   {
     this->checkStateBoundries(sizeof...(states) ? sizeof...(states) - 1 : 0);
     this->initialValueCalculation(0, states...);

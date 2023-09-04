@@ -27,6 +27,8 @@ struct UintPacked
     return *this;
   }
 
+  // Explicitly allow implicit conversion operator calls
+  // NOLINTNEXTLINE
   operator uint32_t() const
   {
     return this->value;
@@ -34,7 +36,7 @@ struct UintPacked
 #ifdef UINTPACKED_COMPILER_PACKING
   unsigned int value : (Bits / 8 + (Bits % 8 != 0 ? 1 : 0)) *
                        8;  // Set bitfield size to next multiple of 8
-  UintPacked(uint32_t value) : value{value} {}
+  explicit UintPacked(uint32_t value) : value{value} {}
 } __attribute__((packed));
 #else
   /*
