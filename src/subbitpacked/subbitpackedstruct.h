@@ -21,7 +21,7 @@ class SubBitPackedStruct : protected PackedStruct<Ns...>
   uint_packed_t data_ = {0};
 
   template <typename... States>
-  void set(size_t index, PackedState state, States... other_states)
+  void set(std::size_t index, PackedState state, States... other_states)
   {
     this->set(index, state);
     this->set(index + 1, other_states...);
@@ -55,7 +55,7 @@ public:
     return Super::kBitsUsed;
   }
 
-  PackedState get(size_t index) const
+  PackedState get(std::size_t index) const
   {
     this->checkStateBoundries(index);
 
@@ -63,7 +63,7 @@ public:
                                  Super::kNumStates[index]);
   }
 
-  void set(size_t index, PackedState state)
+  void set(std::size_t index, PackedState state)
   {
     this->checkStateBoundries(index);
 

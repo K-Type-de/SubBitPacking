@@ -19,7 +19,7 @@ struct kt::SubBitPackedArray<NumStates, NumValues>::Iterator
 
     chunk_ = instance_.entries_[entry_index_];
 
-    for (size_t i = 0; i < chunk_value_index_; ++i)
+    for (std::size_t i = 0; i < chunk_value_index_; ++i)
     {
       chunk_ /= NumStates;
     }
