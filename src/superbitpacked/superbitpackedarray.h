@@ -16,9 +16,10 @@ class SuperBitPackedArray : public PackedStateArray<NumStates, NumValues>
 private:
   static constexpr uint8_t kStatesPer4ByteWord =
       compiletime::NumberOfStatesPer4ByteSubBitPackedWord(NumStates);
-
   static constexpr uint8_t kExtraBitsPerWord = compiletime::NumberOfUnusedUpperBits<uint32_t>(
       compiletime::Pow<NumStates>(kStatesPer4ByteWord) - 1);
+  static constexpr uint8_t kBitsPerEntry = 32 - kExtraBitsPerWord;
+  static constexpr uint32_t kEntryBitMask = compiletime::Pow<2>(kBitsPerEntry) - 1;
 
   static constexpr std::size_t kNumEntries =
       NumValues / kStatesPer4ByteWord +
@@ -51,47 +52,44 @@ private:
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
   inline uint32_t getEntry(std::size_t start_index, std::size_t bit_shift) const
   {
-    if (!bit_shift)
+    if (bit_shift + kBitsPerEntry > 32)
     {
-      uint32_t entry = this->entries_[start_index];
-      // Shift out upper bits
-      entry <<= kExtraBitsPerWord;
-      entry >>= kExtraBitsPerWord;
-      return entry;
+      const uint32_t &entry_1 = this->entries_[start_index];
+      const uint32_t &entry_2 = this->entries_[start_index + 1];
+
+      uint32_t combined_entry =
+          ((entry_1 >> bit_shift) | (entry_2 << (32 - bit_shift))) & kEntryBitMask;
+      return combined_entry;
     }
 
-    const uint32_t &entry_1 = this->entries_[start_index];
-    const uint32_t &entry_2 = this->entries_[start_index + 1];
-
-    uint32_t combined_entry = (entry_1 >> bit_shift) | (entry_2 << (32 - bit_shift));
-    // Shift out upper bits
-    combined_entry <<= kExtraBitsPerWord;
-    combined_entry >>= kExtraBitsPerWord;
-    return combined_entry;
+    const uint32_t entry_value =
+        ((this->entries_[start_index] & (kEntryBitMask << bit_shift)) >> bit_shift);
+    return entry_value;
   }
 
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
   inline void setEntry(std::size_t start_index, std::size_t bit_shift, uint32_t entry)
   {
-    if (!bit_shift)
+    if (bit_shift + kBitsPerEntry > 32)
     {
+      const uint8_t bits_in_1st_entry = 32 - bit_shift;
+      const uint8_t bits_in_2nd_entry = kBitsPerEntry - bits_in_1st_entry;
+
       // Clear old bits
-      this->entries_[start_index] >>= 32 - kExtraBitsPerWord;
-      this->entries_[start_index] <<= 32 - kExtraBitsPerWord;
+      this->entries_[start_index] &=
+          ~((kEntryBitMask >> bits_in_2nd_entry) << 32 - bits_in_1st_entry);
+      this->entries_[start_index + 1] &= ~(kEntryBitMask >> bits_in_1st_entry);
+
       // Store new value
-      this->entries_[start_index] |= entry;
+      this->entries_[start_index] |= ((entry << bits_in_2nd_entry) & kEntryBitMask)
+                                     << 32 - bits_in_1st_entry - bits_in_2nd_entry;
+      this->entries_[start_index + 1] |= entry >> bits_in_1st_entry;
+
       return;
     }
 
-    // Clear old bits
-    this->entries_[start_index] <<= 32 - bit_shift;
-    this->entries_[start_index] >>= 32 - bit_shift;
-    this->entries_[start_index + 1] >>= bit_shift - 1;
-    this->entries_[start_index + 1] <<= bit_shift - 1;
-
-    // Store new value
+    this->entries_[start_index] &= ~(kEntryBitMask << bit_shift);
     this->entries_[start_index] |= entry << bit_shift;
-    this->entries_[start_index + 1] |= entry >> (32 - bit_shift);
   }
 
   /**
