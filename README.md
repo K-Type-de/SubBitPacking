@@ -88,9 +88,25 @@ When storing many values, we can save 25% memory here by not storing the values 
 
 ## How Does It Work?
 
-Internally the values are held in an array of 32-bit data chunks. Instead of bitwise packing, however, a form of [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) is used to store the values. The advantage of this is that you can pack (the same or) more values in a given data buffer than with traditional bitwise packing. The overall space saved for values with $n$ different states can be calculated with the following formula:
+Internally the values are held in an array of 32-bit data chunks. Instead of bitwise packing, however, a form of [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) is used to store the values. The advantage of this is that you can pack (the same or) more values in a given data buffer than with traditional bitwise packing. The number of values ($m$) that can be packed into a 32-bit data block, where each value can hold one of $n$ states, is calculated as follows:
 
-$$ factor = {\lfloor {32 \div \log_2(n)  }\rfloor \over \lfloor {32 \div \lceil \log_2(n) \rceil } \rfloor} $$
+$$ m = \lfloor {32 \div \log_2(n)}\rfloor $$
+
+A 32-bit data block ($v$) for values $a_0$ ... $a_{m-1}$ is computed like this:
+
+$$ v = \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
+
+```math
+\{ \: a_i \in \mathbf{N} _{0} \: \lvert \: 0 \le a_i \lt n \: \}
+```
+
+Retrieving a value works like this:
+
+$$ a_i =  {v \over {n^i}} \mod n_i $$
+
+The overall space saved compared to simple bit-packing can be calculated with the following formula:
+
+$$ factor = {\lfloor {32 \div \log_2(n)}\rfloor \over \lfloor {32 \div \lceil \log_2(n) \rceil } \rfloor} $$
 
 Lets say you want to store values with `3` different states:
 
@@ -179,21 +195,15 @@ The following results stem from running [Code](https://gist.github.com/Christian
 
 ## SubBitPacked Structs
 
-Additionally to the packing of homogeneous state values, this library provides a way to store multiple values with different number of states in a single struct. This is called a `SubBitPackedStruct`. The underlying arithmetic is similar to how [Sub-Bit State Packing](#sub-bit-state-packing) works. Look [here](#underlying-mathematics) for how this works.
+Additionally to the packing of homogeneous state values, this library provides a way to store multiple values with a different number of possible states each in a single struct. This is called a `SubBitPackedStruct`.
 
 It is also possible to store multiple `SubBitPackedStructs` loosely in a `SubBitPackedStructArray` or tightly packed in a `SuperBitPackedStructArray`. See [SubBitPackedStruct](#subbitpackedstruct) for how to do this.
 
 ### Underlying Mathematics
 
-The value of `SubBitPackedArray` entries for values $a_i$ with $n$ possible states and a size of $m$ elements is computed like this:
+The calculation for the underlying 32-bit value of `SubBitPackedArray` entries is explained in [this](#how-does-it-work) section.
 
-$$ \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
-
-```math
-\{ \: a_i \in \mathbf{N} _{0} \: \lvert \: 0 \le a_i \lt n \: \}
-```
-
-The underlying value of a `SubBitPackedStruct` is calculated in a similar way. However, instead of mutliplying a states' value with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplicator $p_i$.
+The underlying value of a `SubBitPackedStruct` is calculated in a similar way. It holds $m$ number of values $a_i$. Each can be set to one of $n_i$ different states. The main difference compared to the calculation of `SubBitPackedArray` is that instead of mutliplying a value $a_i$ with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplicator $p_i$.
 This multiplicator can be calculated with this formula:
 
 $$ p_i = \prod_{j=0}^{i-1} n_{j} $$
