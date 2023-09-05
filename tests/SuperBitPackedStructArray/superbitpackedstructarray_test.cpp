@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <bitset>
+
 #include "superbitpacked.h"
 
 using namespace kt;
