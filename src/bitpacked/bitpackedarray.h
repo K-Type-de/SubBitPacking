@@ -40,9 +40,10 @@ public:
 
   PackedState get(std::size_t value_index) const override
   {
-    this->checkValueBoundries(value_index);
     const std::size_t entry_index = (value_index * kBitsPerState) / 32;
     const std::size_t bit_index = (value_index * kBitsPerState) % 32;
+
+    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
 
     if (bit_index + kBitsPerState <= 32)
     {
@@ -56,9 +57,10 @@ public:
 
   void set(std::size_t value_index, PackedState state) override
   {
-    this->checkValueBoundries(value_index);
     const std::size_t entry_index = (value_index * kBitsPerState) / 32;
     const std::size_t bit_index = (value_index * kBitsPerState) % 32;
+
+    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
 
     if (bit_index + kBitsPerState <= 32)
     {

@@ -40,11 +40,13 @@ private:
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N > 0), int>::type = 0>
   inline internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t value_index) const
   {
-    this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
     const std::size_t bit_address = (entry_index * 32) - (entry_index * kExtraBitsPerWord);
     const std::size_t start_index = bit_address / 32;
     const std::size_t bit_shift = bit_address % 32;
+
+    this->checkArrayBoundries(start_index + (bit_shift + kBitsPerEntry > 32 ? 1 : 0), kEntrySize,
+                              value_index);
 
     return {start_index, bit_shift};
   }
@@ -99,8 +101,9 @@ private:
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
   inline PackedState getInternal(std::size_t value_index) const
   {
-    this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
+
+    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
 
     return SubBitPackedData::Get(this->entries_[entry_index],
                                  this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
@@ -110,8 +113,9 @@ private:
   template <int N = kExtraBitsPerWord, typename std::enable_if<(N == 0), int>::type = 0>
   inline void setInternal(std::size_t value_index, PackedState state)
   {
-    this->checkValueBoundries(value_index);
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
+
+    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
 
     SubBitPackedData::Set(this->entries_[entry_index],
                           this->kPowerLookupTable[value_index % kStatesPer4ByteWord], NumStates,
