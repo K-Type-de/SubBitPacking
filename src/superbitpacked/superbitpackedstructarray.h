@@ -15,6 +15,7 @@ class SuperBitPackedStructArray : public PackedStructArray<NumStructs>
 {
   static constexpr uint8_t kBitsPerEntry = StructEntry::GetBitsUsed();
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
+  static constexpr uint32_t kEntryBitMask = compiletime::Pow<2>(kBitsPerEntry) - 1;
 
   // 8, 16, 24 and 32-bit can be stored in SubBitPackedStructArray without wasting bits
   static_assert(kBitsPerEntry % 8 != 0,
@@ -27,7 +28,7 @@ class SuperBitPackedStructArray : public PackedStructArray<NumStructs>
            ? 1  // Add +1 array entry if it does not already fit perfectly
            : 0);
 
-  uint32_t storage_[kEntrySize];
+  uint32_t storage_[kEntrySize] = {0};
 
   inline internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t entry_index) const
   {
@@ -40,46 +41,45 @@ class SuperBitPackedStructArray : public PackedStructArray<NumStructs>
 
   inline StructEntry getEntryInternal(std::size_t start_index, std::size_t bit_shift) const
   {
-    if (!bit_shift)
+    if (bit_shift + kBitsPerEntry > 32)
     {
-      uint32_t entry = this->storage_[start_index];
-      // Shift out upper bits
-      entry <<= kExtraBitsPerWord;
-      entry >>= kExtraBitsPerWord;
-      return static_cast<StructEntry>(entry);
+      const uint32_t &entry_1 = this->storage_[start_index];
+      const uint32_t &entry_2 = this->storage_[start_index + 1];
+
+      uint32_t combined_entry =
+          ((entry_1 >> bit_shift) | (entry_2 << (32 - bit_shift))) & kEntryBitMask;
+      return static_cast<StructEntry>(combined_entry);
     }
 
-    const uint32_t &entry_1 = this->storage_[start_index];
-    const uint32_t &entry_2 = this->storage_[start_index + 1];
-
-    uint32_t combined_entry = (entry_1 >> bit_shift) | (entry_2 << (32 - bit_shift));
-    // Shift out upper bits
-    combined_entry <<= kExtraBitsPerWord;
-    combined_entry >>= kExtraBitsPerWord;
-    return static_cast<StructEntry>(combined_entry);
+    const uint32_t entry_value =
+        ((this->storage_[start_index] & (kEntryBitMask << bit_shift)) >> bit_shift);
+    return static_cast<StructEntry>(entry_value);
   }
 
-  inline void setEntryInternal(std::size_t start_index, std::size_t bit_shift, StructEntry entry)
+  inline void setEntryInternal(std::size_t start_index, std::size_t bit_shift,
+                               const StructEntry &entry)
   {
-    if (!bit_shift)
+    const uint32_t data = entry.getData();
+    if (bit_shift + kBitsPerEntry > 32)
     {
+      const uint8_t bits_in_1st_entry = 32 - bit_shift;
+      const uint8_t bits_in_2nd_entry = kBitsPerEntry - bits_in_1st_entry;
+
       // Clear old bits
-      this->storage_[start_index] >>= kBitsPerEntry;
-      this->storage_[start_index] <<= kBitsPerEntry;
+      this->storage_[start_index] &=
+          ~((kEntryBitMask >> bits_in_2nd_entry) << 32 - bits_in_1st_entry);
+      this->storage_[start_index + 1] &= ~(kEntryBitMask >> bits_in_1st_entry);
+
       // Store new value
-      this->storage_[start_index] |= entry.getData();
+      this->storage_[start_index] |= ((data << bits_in_2nd_entry) & kEntryBitMask)
+                                     << 32 - bits_in_1st_entry - bits_in_2nd_entry;
+      this->storage_[start_index + 1] |= data >> bits_in_1st_entry;
+
       return;
     }
 
-    // Clear old bits
-    this->storage_[start_index] <<= 32 - bit_shift;
-    this->storage_[start_index] >>= 32 - bit_shift;
-    this->storage_[start_index + 1] >>= bit_shift - 1;
-    this->storage_[start_index + 1] <<= bit_shift - 1;
-
-    // Store new value
-    this->storage_[start_index] |= entry.getData() << bit_shift;
-    this->storage_[start_index + 1] |= entry.getData() >> (32 - bit_shift);
+    this->storage_[start_index] &= ~(kEntryBitMask << bit_shift);
+    this->storage_[start_index] |= data << bit_shift;
   }
 
 public:
