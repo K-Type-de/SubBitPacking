@@ -36,6 +36,9 @@ class SuperBitPackedStructArray : public PackedStructArray<NumStructs>
     const std::size_t start_index = bit_address / 32;
     const std::size_t bit_shift = bit_address % 32;
 
+    this->checkArrayBoundries(start_index + (bit_shift + kBitsPerEntry > 32 ? 1 : 0), kEntrySize,
+                              entry_index);
+
     return {start_index, bit_shift};
   }
 
@@ -95,14 +98,12 @@ public:
 
   inline StructEntry getEntryCopy(std::size_t entry_index) const
   {
-    this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
     return this->getEntryInternal(metadata.start_index, metadata.bit_shift);
   }
 
   inline PackedState get(std::size_t entry_index, std::size_t state_index) const override
   {
-    this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
     const StructEntry entry = this->getEntryInternal(metadata.start_index, metadata.bit_shift);
 
@@ -111,7 +112,6 @@ public:
 
   inline void set(std::size_t entry_index, std::size_t state_index, PackedState state) override
   {
-    this->checkValueBoundries(entry_index);
     auto metadata = this->getEntryMetadata(entry_index);
     StructEntry entry = this->getEntryInternal(metadata.start_index, metadata.bit_shift);
 
