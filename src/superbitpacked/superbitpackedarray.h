@@ -33,7 +33,7 @@ private:
 
   // Calculate power lookup table at compile time
   static constexpr std::array<uint32_t, kStatesPer4ByteWord> kPowerLookupTable =
-      compiletime::GeneratePowLut<kStatesPer4ByteWord>(compiletime::Pow<NumStates>);
+      compiletime::GenerateLut<kStatesPer4ByteWord>(compiletime::Pow<NumStates>);
 
   uint32_t entries_[kEntrySize] = {0};
 

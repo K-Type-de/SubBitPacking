@@ -57,7 +57,7 @@ constexpr auto lut(Generator&& generator_function, Values... values) ->
 }
 
 template <std::size_t Size, typename Generator>
-constexpr auto GeneratePowLut(Generator&& generator_function)
+constexpr auto GenerateLut(Generator&& generator_function)
     -> std::array<decltype(generator_function(uint8_t{0})), Size>
 {
   return lut<Size, decltype(generator_function(uint8_t{0}))>(
