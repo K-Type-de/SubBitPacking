@@ -44,7 +44,7 @@ public:
   {
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
 
-    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
+    this->checkAllBoundries(entry_index, kEntrySize, value_index);
 
     return SubBitPackedData::Get(this->entries_[entry_index],
                                  this->kPowerLookupTable[value_index % kStatesPer4ByteWord],
@@ -55,7 +55,7 @@ public:
   {
     const std::size_t entry_index = value_index / kStatesPer4ByteWord;
 
-    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
+    this->checkAllBoundries(entry_index, kEntrySize, value_index);
 
     SubBitPackedData::Set(this->entries_[entry_index],
                           this->kPowerLookupTable[value_index % kStatesPer4ByteWord], NumStates,

@@ -16,18 +16,33 @@ template <std::size_t NumValues>
 class PackedArray
 {
 protected:
-  inline void checkArrayBoundries(std::size_t array_index, std::size_t array_size,
-                                  std::size_t value_index = 0) const
+  PackedArray() = default;
+
+  inline void checkAllBoundries(std::size_t array_index, std::size_t array_size,
+                                std::size_t value_index = 0) const
+  {
+#ifdef KT_ENABLE_EXCEPTIONS
+    this->checkValueBoundries(value_index);
+    this->checkArrayBoundries(array_index, array_size);
+#endif  // KT_ENABLE_EXCEPTIONS
+  }
+
+  inline void checkValueBoundries(std::size_t value_index) const
+  {
+#ifdef KT_ENABLE_EXCEPTIONS
+    if (value_index >= NumValues)
+    {
+      throw std::out_of_range{"[PackedArray] Value index out of range"};
+    }
+#endif  // KT_ENABLE_EXCEPTIONS
+  }
+
+  inline void checkArrayBoundries(std::size_t array_index, std::size_t array_size) const
   {
 #ifdef KT_ENABLE_EXCEPTIONS
     if (array_index >= array_size)
     {
       throw std::out_of_range{"[PackedArray] Array index out of range"};
-    }
-
-    if (value_index >= NumValues)
-    {
-      throw std::out_of_range{"[PackedArray] Value index out of range"};
     }
 #endif  // KT_ENABLE_EXCEPTIONS
   }

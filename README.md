@@ -35,7 +35,7 @@
 
 ## TL;DR
 
-A library to store state values in a memory efficient way using sub-bit compression.
+A C++ library to store state values in a memory efficient way using sub-bit compression.
 
 ## Summary
 
