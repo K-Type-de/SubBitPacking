@@ -32,7 +32,7 @@ public:
   static constexpr std::size_t kNumFields = sizeof...(Ns);
   static constexpr std::array<uint32_t, kNumFields> kNumStates = {Ns...};
   static constexpr std::array<uint32_t, kNumFields> kStatePowers =
-      compiletime::GeneratePowLut<kNumFields>(compiletime::VariadicStatePow<Ns...>);
+      compiletime::GenerateLut<kNumFields>(compiletime::VariadicStatePow<Ns...>);
   static constexpr uint8_t kBitsUsed = 64 - compiletime::NumberOfUnusedUpperBits<uint64_t>(
                                                 compiletime::HighestVariadicValue<Ns...>());
   static_assert(kBitsUsed <= 32, "[SubBitPackedStruct] Number of states exceed 32-bit limit");

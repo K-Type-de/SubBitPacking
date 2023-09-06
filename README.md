@@ -21,6 +21,9 @@
   - [Comparing Arrays](#comparing-arrays)
   - [SubBitPacked Structs](#subbitpacked-structs)
     - [Underlying Mathematics](#underlying-mathematics)
+  - [Compile Time Calculations](#compile-time-calculations)
+    - [Lookup Table Generation](#lookup-table-generation)
+    - [Size Calculations](#size-calculations)
 - [How To Use](#how-to-use)
   - [BitPacked-, SubBitPacked- \& SuperBitPacked Arrays](#bitpacked--subbitpacked---superbitpacked-arrays)
     - [Initialization](#initialization)
@@ -37,8 +40,8 @@ A library to store state values in a memory efficient way using sub-bit compress
 ## Summary
 
 Storing states bitwise can lead to huge amounts of wasted memory. This library aims to save memory by packing values arithmetically. [This table](#space-saved) lists the amount of saved space when comparing arithmetically packed values and bit-packed values.
-The drawback is a runtime overhead for setting/retrieving the values because calculations need to be done instead of simple addressing.
-Therefore, if the number of states you want to store has no spacial benefit (e.g. powers of 2) you should stick to bitwise packing because of the faster runtime.
+The drawback is a run-time overhead for setting/retrieving the values because calculations need to be done instead of simple addressing.
+Therefore, if the number of states you want to store has no spacial benefit (e.g. powers of 2) you should stick to bitwise packing because of the faster run-time.
 On the other hand, you can fit more values of states that can be tightly packed together on platforms where memory is the limiting factor (e.g. embedded systems) utilizing this library.
 
 ## The Problem With Storing States
@@ -90,7 +93,7 @@ When storing many values, we can save 25% memory here by not storing the values 
 
 Internally the values are held in an array of 32-bit data chunks. Instead of bitwise packing, however, a form of [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) is used to store the values. The advantage of this is that you can pack (the same or) more values in a given data buffer than with traditional bitwise packing. The number of values ($m$) that can be packed into a 32-bit data block, where each value can hold one of $n$ states, is calculated as follows:
 
-$$ m = \lfloor {32 \div \log_2(n)}\rfloor $$
+$$ m = \lfloor {32 / \log_2(n)}\rfloor $$
 
 A 32-bit data block ($v$) for values $a_0$ ... $a_{m-1}$ is computed like this:
 
@@ -106,11 +109,11 @@ $$ a_i =  {v \over {n^i}} \mod n_i $$
 
 The overall space saved compared to simple bit-packing can be calculated with the following formula:
 
-$$ factor = {\lfloor {32 \div \log_2(n)}\rfloor \over \lfloor {32 \div \lceil \log_2(n) \rceil } \rfloor} $$
+$$ factor = {\lfloor {32 / \log_2(n)}\rfloor \over \lfloor {32 / \lceil \log_2(n) \rceil } \rfloor} $$
 
 Lets say you want to store values with `3` different states:
 
-$$ factor = {\lfloor {32 \div \log_2(3)  }\rfloor \over \lfloor {32 \div \lceil \log_2(3) \rceil } \rfloor} = 1.25$$
+$$ factor = {\lfloor {32 / \log_2(3)  }\rfloor \over \lfloor {32 / \lceil \log_2(3) \rceil } \rfloor} = 1.25$$
 
 This means an arithmetically packed buffer will be able to store 25% more values than with traditional packing. See [this table](#space-saved) for more values.
 
@@ -203,8 +206,8 @@ It is also possible to store multiple `SubBitPackedStructs` loosely in a `SubBit
 
 The calculation for the underlying 32-bit value of `SubBitPackedArray` entries is explained in [this](#how-does-it-work) section.
 
-The underlying value of a `SubBitPackedStruct` is calculated in a similar way. It holds $m$ number of values $a_i$. Each can be set to one of $n_i$ different states. The main difference compared to the calculation of `SubBitPackedArray` is that instead of mutliplying a value $a_i$ with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplicator $p_i$.
-This multiplicator can be calculated with this formula:
+The underlying value of a `SubBitPackedStruct` is calculated in a similar way. It holds $m$ number of values $a_i$. Each can be set to one of $n_i$ different states. The main difference compared to the calculation of `SubBitPackedArray` is that instead of mutliplying a value $a_i$ with $n^i$ it needs to be multiplied with the product of each number of states before it. So each state value $a_i$ needs to be multiplied by a multiplier $p_i$.
+This multiplier can be calculated with this formula:
 
 $$ p_i = \prod_{j=0}^{i-1} n_{j} $$
 
@@ -245,6 +248,62 @@ Retrieve state value 1:
 
 $$ a_1 =  {119 \over 3} \pmod 5 \equiv 4 $$
 
+## Compile Time Calculations
+
+As you have seen, this library relies heavily on mathematical calculations. This has the potential to greatly decrease run-time performance. To mitigate this, this library does most of the necessary calculations at compile-time. The only things not precalculated are related to getting/setting values.
+
+To keep backwards compatibility with `C++11` a few hurdles had to be jumped.
+`constexpr` functions are very limited on what they were allowed to do back then. Therefore, most of the implementations in this library consist of only a return statement of concatenated ternary conditional operations.
+
+Also, the default C++ math library only provides `constexpr` support from `C++26` onwards. To avoid dependencies on third-party math libraries, the needed functionality was either self-implemented or bypassed altogether (no `log()`, for example). Check out `compiletime.h` to see all implementations.
+
+Here are a few examples on what is going on when compiling Objects from this library:
+
+### Lookup Table Generation
+
+When calculating the underlying values for a `SubBitPackedArray` a lot of exponential calculations need to be done. To avoid the run-time overhead, instead of doing the calculations over and over again, a lookup table is calculated once at compile-time. This is done in two parts: There is a generator, that creates an std::array (inspired by [this blog post](https://joelfilho.com/blog/2020/compile_time_lookup_tables_in_cpp/#compile-time-lut-in-c-11)) and then there is this `pow` implementation that generates the actual values when fed into the generator:
+
+```c++
+template <uint16_t Base>
+constexpr uint32_t Pow(uint8_t exponent)
+{
+  return (exponent == 0) ? 1 : (Base * Pow<Base>(exponent - 1));
+}
+```
+
+The lookup table for a `SubBitPackedStruct` is similar, however, each table value needs to be the product of all the numbers before the current value. Feeding the following implementation into the generator does the trick:
+
+```c++
+template <uint16_t Base>
+constexpr uint32_t VariadicStatePow(uint8_t)
+{
+  return 1;
+}
+
+template <uint16_t Base, uint16_t... Extra>
+constexpr auto VariadicStatePow(uint8_t exponent) ->
+    typename std::enable_if<sizeof...(Extra) != 0, uint32_t>::type
+{
+  return (exponent == 0) ? 1 : Base * VariadicStatePow<Extra...>(exponent - 1);
+}
+
+```
+
+For example, creating a lookup table this way:
+
+```c++
+GenerateLut<3>(VariadicStatePow<4, 8, 9>);
+```
+
+will yield an array that contains the values `[1, 4, 32]`.
+
+### Size Calculations
+
+All the necessary size calculations are done at compile-time as well. The numbers for how many state values a 32-bit `SubBitPackedArray` data chunk can hold, however, are precalculated for all possible values (2 - 65535). The constexpr function `NumberOfStatesPer4ByteSubBitPackedWord` merely returns these precalculated values. This is done in order to circumvent using the `log()` function, as this cannot be done at compile-time.
+
+To calculate the number of 32-bit chunks a `SuperBitPacked(Struct)Array` needs to allocate, more information is needed, like the highest amount of bits a given array entry really needs.
+This is done by actually counting bits instead of calculation, because, again, most mathematical functions are out of reach for this.
+
 # How To Use
 
 Basic usage examples for this library.
@@ -253,7 +312,7 @@ Basic usage examples for this library.
 
 ### Initialization
 
-Let's say you have a 3-Color-Display with a resolution of 800x480 (== 384000 values). Depending on how much runtime you can spare to save memory, you can choose between these three arrays:
+Let's say you have a 3-Color-Display with a resolution of 800x480 (== 384000 values). Depending on how much run-time you can spare to save memory, you can choose between these three arrays:
 
 ```c++
     kt::BitPackedArray<3, 384000> displayBuffer{};
