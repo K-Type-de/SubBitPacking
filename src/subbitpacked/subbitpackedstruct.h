@@ -41,6 +41,7 @@ class SubBitPackedStruct : protected PackedStruct<Ns...>
 
 public:
   SubBitPackedStruct() = default;
+  SubBitPackedStruct(uint32_t value) : data_{value} {}
   SubBitPackedStruct(const SubBitPackedStruct &other) : data_{other.data_} {}
 
   template <typename... State>

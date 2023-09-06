@@ -43,7 +43,7 @@ public:
     const std::size_t entry_index = (value_index * kBitsPerState) / 32;
     const std::size_t bit_index = (value_index * kBitsPerState) % 32;
 
-    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
+    this->checkAllBoundries(entry_index, kEntrySize, value_index);
 
     if (bit_index + kBitsPerState <= 32)
     {
@@ -60,7 +60,7 @@ public:
     const std::size_t entry_index = (value_index * kBitsPerState) / 32;
     const std::size_t bit_index = (value_index * kBitsPerState) % 32;
 
-    this->checkArrayBoundries(entry_index, kEntrySize, value_index);
+    this->checkAllBoundries(entry_index, kEntrySize, value_index);
 
     if (bit_index + kBitsPerState <= 32)
     {
