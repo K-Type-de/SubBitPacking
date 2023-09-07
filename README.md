@@ -61,7 +61,7 @@ On the other hand, you can fit more values of states that can be tightly packed 
 
 `sizeof(a_lot_of_states)` will, therefore, give you 10000
 
-In order to store 10000 values we are using 10000 bytes or 80000 bits which could store up to $$2^{(10000 * 8)} = 2^{80000} \approx 10^{24000} $$ binary states  - but we only need $$3^{10000} \approx 10^{4771} $$ states.
+In order to store 10000 values we are using 10000 bytes or 80000 bits which could store up to $$2^{(10\,000 * 8)} = 2^{80\,000} \approx 10^{24\,000} $$ binary states  - but we only need $$3^{10\,000} \approx 10^{4\,771} $$ states.
 
 This naive method to store states is a huge waste of memory.
 
@@ -99,9 +99,10 @@ A 32-bit data block ($v$) for values $a_0$ ... $a_{m-1}$ is computed like this:
 
 $$ v = \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
-```math
-\{ \: a_i \in \mathbf{N} _{0} \: \lvert \: 0 \le a_i \lt n \: \}
-```
+$$
+\lbrace \: a_i \in \mathbb{N}\natnums _{0} \: \lvert \: 0 \le a_i \lt n \: \rbrace
+$$
+
 
 Retrieving a value works like this:
 
@@ -176,25 +177,25 @@ Stores values as described [here](#saving-even-more-space). If the number of unu
 The following results stem from running [Code](https://gist.github.com/ChristianAmannKT/55a690f825bb68701a3b87d2782b7ce6) on an [ESP32](https://en.wikipedia.org/wiki/ESP32). The code was built with `-Os` optimization. Each array holds 100,000 values and was read from and written to 10,000,000 times. Here are a few different number of states and the correlating benchmark results:
 
 `3 States`
-| Array | Bytes used for 100,000 values | 10,000,000 write/read times (ms) |
-| -- | -- | -- |
-| BitPackedArray | 25000 | 3485 |
-| SubBitPackedArray | 20000 | 5789 |
-| SuperBitPackedArray | 20000  | 5789 |
+| Array | Bytes used for 100&#x200A;&hairsp;000 values | 10&#x200A;&hairsp;&#x200A;000000 write/read times (ms) |
+| -- | --: | --: |
+| BitPackedArray | 253&hairsp;000 | 3&hairsp;485 |
+| SubBitPackedArray | 203&hairsp;000 | 53&hairsp;789 |
+| SuperBitPackedArray | 203&hairsp;000  | 53&hairsp;789 |
 
 `12 States`
-| Array | Bytes used for 100,000 values | 10,000,000 write/read times (ms) |
-| -- | -- | -- |
-| BitPackedArray | 50000 | 3443 |
-| SubBitPackedArray | 50000 | 5239 |
-| SuperBitPackedArray | 45316  | 10174 |
+| Array | Bytes used for 100&hairsp;000 values | 10&hairsp;000&hairsp;000 write/read times (ms) |
+| -- | --: | --: |
+| BitPackedArray | 50&hairsp;000 | 3&hairsp;443 |
+| SubBitPackedArray | 50&hairsp;000 | 5&hairsp;239 |
+| SuperBitPackedArray | 45&hairsp;316  | 10&hairsp;174 |
 
 `17 States`
-| Array | Bytes used for 100,000 values | 10,000,000 write/read times (ms) |
-| -- | -- | -- |
-| BitPackedArray | 62500 | 3967 |
-| SubBitPackedArray | 57144 | 5955 |
-| SuperBitPackedArray | 51788  | 10640 |
+| Array | Bytes used for 100&hairsp;000 values | 10&hairsp;000&hairsp;000 write/read times (ms) |
+| -- | --: | --: |
+| BitPackedArray | 62&hairsp;500 | 3&hairsp;967 |
+| SubBitPackedArray | 57&hairsp;144 | 5&hairsp;955 |
+| SuperBitPackedArray | 51&hairsp;788  | 10&hairsp;640 |
 
 ## SubBitPacked Structs
 
