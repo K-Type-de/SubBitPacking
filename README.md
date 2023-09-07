@@ -200,8 +200,48 @@ The following results stem from running [Code](https://gist.github.com/Christian
 
 Additionally to the packing of homogeneous state values, this library provides a way to store multiple values with a different number of possible states each in a single struct. This is called a `SubBitPackedStruct`.
 
-It is also possible to store multiple `SubBitPackedStructs` loosely in a `SubBitPackedStructArray` or tightly packed in a `SuperBitPackedStructArray`. See [SubBitPackedStruct](#subbitpackedstruct) for how to do this.
+Consider the following `MyStruct`:
+```c++
+struct MyStruct {
+    uint8_t state3;
+    uint8_t state5;
+    uint8_t state9;
+    uint8_t state1;
+    uint8_t state33;
+    uint8_t state65;
+    uint8_t state129;
+}; 
+```
+`sizeof(MyStruct)` returns `7` bytes.
 
+To optimize memory usage and pack data more efficiently, we can use bitfields:
+
+```c++
+struct MyStruct {
+    uint16_t state3   : 2; // 2 bits (0-3) for 3 states
+    uint16_t state5   : 3; // 3 bits (0-7) for 5 states
+    uint16_t state9   : 4; // 4 bits (0-15) for 9 states
+    uint16_t state17  : 5; // 5 bits (0-31) for 17 states
+    uint16_t state33  : 6; // 6 bits (0-63) for 33 states
+    uint16_t state65  : 7; // 7 bits (0-127) for 65 states
+    uint16_t state129 : 8; // 8 bits (0-255) for 129 states
+};
+```
+Now, `sizeof(MyStruct)` gives you `6` bytes, or if your compiler supports packed structs, it's `5` bytes.
+
+For a single instance of this struct, `SubBitPackedStructs` requires only 30 bits, which can be stored in 4 bytes.
+
+### Arrays of SubBitPackedStructs
+
+You can also store multiple `SubBitPackedStructs` loosely in a `SubBitPackedStructArray` or tightly packed in a `SuperBitPackedStructArray`. Refer to [SubBitPackedStruct](#subbitpackedstruct) for implementation details.
+
+Storing 10,000 of these structs in a `SuperBitPackedStruct` consumes only 37,512 bytes. Depending on the initial memory usage, this optimization can save:
+
+- 32488 (70000-37512) bytes ≈ 46%,
+- 22488 (60000-37512) bytes ≈ 37%,
+- 12488 (50000-37512) bytes ≈ 25% or
+- 2488 (40000-37512) bytes ≈ 6%
+ 
 ### Underlying Mathematics
 
 The calculation for the underlying 32-bit value of `SubBitPackedArray` entries is explained in [this](#how-does-it-work) section.
