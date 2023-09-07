@@ -229,7 +229,7 @@ struct MyStruct {
 ```
 Now, `sizeof(MyStruct)` gives you `6` bytes, or if your compiler supports packed structs, it's `5` bytes.
 
-For a single instance of this struct, `SubBitPackedStructs` requires only 30 bits, which can be stored in 4 bytes.
+For a single instance of this struct, SubBitPackedStructs requires only 30 bits (instead of the native 35 bits), which can then be stored in 4 bytes.
 
 ### Arrays of SubBitPackedStructs
 
