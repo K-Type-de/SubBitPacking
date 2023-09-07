@@ -2,10 +2,10 @@
 #define KT_SUPERBITPACKEDARRAY_H
 
 #include "../base/packedarray.h"
+#include "../utils/bitpackedentrybuffer.h"
 #include "../utils/compiletime.h"
 #include "../utils/packedstate.h"
 #include "../utils/subbitpackeddata.h"
-#include "../utils/superbitpackedentrybuffer.h"
 
 namespace kt
 {
@@ -31,7 +31,7 @@ private:
   static constexpr std::array<uint32_t, kStatesPer4ByteWord> kPowerLookupTable =
       compiletime::GenerateLut<kStatesPer4ByteWord>(compiletime::Pow<NumStates>);
 
-  SuperBitPackedEntryBuffer<kBitsPerEntry, kNumEntries> buffer_{};
+  BitPackedEntryBuffer<kBitsPerEntry, kNumEntries> buffer_{};
 
 public:
   SuperBitPackedArray() = default;
