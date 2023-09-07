@@ -5,10 +5,18 @@
 
 #include "../base/packedarray.h"
 #include "compiletime.h"
-#include "superbitpackedarrayentrymetadata.h"
 
 namespace kt
 {
+
+namespace internal
+{
+struct SuperBitPackedArrayEntryMetadata
+{
+  std::size_t start_index;
+  std::size_t bit_shift;
+};
+}  // namespace internal
 
 template <uint8_t BitsPerEntry, std::size_t NumberOfEntries>
 class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
@@ -33,46 +41,48 @@ class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
   }
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N > 0), int>::type = 0>
-  inline uint32_t getEntry(std::size_t start_index, std::size_t bit_shift) const
+  inline uint32_t getEntry(const internal::SuperBitPackedArrayEntryMetadata &metadata) const
   {
-    if (bit_shift + BitsPerEntry > 32)
+    if (metadata.bit_shift + BitsPerEntry > 32)
     {
-      const uint32_t &entry_1 = this->storage_[start_index];
-      const uint32_t &entry_2 = this->storage_[start_index + 1];
+      const uint32_t &entry_1 = this->storage_[metadata.start_index];
+      const uint32_t &entry_2 = this->storage_[metadata.start_index + 1];
 
       uint32_t combined_entry =
-          ((entry_1 >> bit_shift) | (entry_2 << (32 - bit_shift))) & kEntryBitMask;
+          ((entry_1 >> metadata.bit_shift) | (entry_2 << (32 - metadata.bit_shift))) &
+          kEntryBitMask;
       return combined_entry;
     }
 
     const uint32_t entry_value =
-        ((this->storage_[start_index] & (kEntryBitMask << bit_shift)) >> bit_shift);
+        ((this->storage_[metadata.start_index] & (kEntryBitMask << metadata.bit_shift)) >>
+         metadata.bit_shift);
     return entry_value;
   }
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N > 0), int>::type = 0>
-  inline void setEntry(std::size_t start_index, std::size_t bit_shift, uint32_t entry)
+  inline void setEntry(const internal::SuperBitPackedArrayEntryMetadata &metadata, uint32_t entry)
   {
-    if (bit_shift + BitsPerEntry > 32)
+    if (metadata.bit_shift + BitsPerEntry > 32)
     {
-      const uint8_t bits_in_1st_entry = 32 - bit_shift;
+      const uint8_t bits_in_1st_entry = 32 - metadata.bit_shift;
       const uint8_t bits_in_2nd_entry = BitsPerEntry - bits_in_1st_entry;
 
       // Clear old bits
-      this->storage_[start_index] &=
+      this->storage_[metadata.start_index] &=
           ~((kEntryBitMask >> bits_in_2nd_entry) << 32 - bits_in_1st_entry);
-      this->storage_[start_index + 1] &= ~(kEntryBitMask >> bits_in_1st_entry);
+      this->storage_[metadata.start_index + 1] &= ~(kEntryBitMask >> bits_in_1st_entry);
 
       // Store new value
-      this->storage_[start_index] |= ((entry << bits_in_2nd_entry) & kEntryBitMask)
-                                     << 32 - bits_in_1st_entry - bits_in_2nd_entry;
-      this->storage_[start_index + 1] |= entry >> bits_in_1st_entry;
+      this->storage_[metadata.start_index] |= ((entry << bits_in_2nd_entry) & kEntryBitMask)
+                                              << 32 - bits_in_1st_entry - bits_in_2nd_entry;
+      this->storage_[metadata.start_index + 1] |= entry >> bits_in_1st_entry;
 
       return;
     }
 
-    this->storage_[start_index] &= ~(kEntryBitMask << bit_shift);
-    this->storage_[start_index] |= entry << bit_shift;
+    this->storage_[metadata.start_index] &= ~(kEntryBitMask << metadata.bit_shift);
+    this->storage_[metadata.start_index] |= entry << metadata.bit_shift;
   };
 
 public:
@@ -93,14 +103,14 @@ public:
   inline uint32_t get(std::size_t entry_index) const
   {
     auto metadata = this->getEntryMetadata(entry_index);
-    return this->getEntry(metadata.start_index, metadata.bit_shift);
+    return this->getEntry(metadata);
   }
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N > 0), int>::type = 0>
   inline void set(std::size_t entry_index, uint32_t entry)
   {
     auto metadata = this->getEntryMetadata(entry_index);
-    return this->setEntry(metadata.start_index, metadata.bit_shift, entry);
+    return this->setEntry(metadata, entry);
   }
 
   std::size_t getArraySize() const
