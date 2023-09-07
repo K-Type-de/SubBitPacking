@@ -11,7 +11,7 @@ namespace kt
 
 namespace internal
 {
-struct SuperBitPackedArrayEntryMetadata
+struct BitPackedArrayEntryMetadata
 {
   std::size_t start_index;
   std::size_t bit_shift;
@@ -19,7 +19,7 @@ struct SuperBitPackedArrayEntryMetadata
 }  // namespace internal
 
 template <uint8_t BitsPerEntry, std::size_t NumberOfEntries>
-class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
+class BitPackedEntryBuffer : private PackedArray<NumberOfEntries>
 {
   static constexpr uint8_t kExtraBitsPerEntry = 32 - BitsPerEntry;
   static constexpr uint32_t kEntryBitMask = compiletime::Pow<2>(BitsPerEntry) - 1;
@@ -30,7 +30,7 @@ class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
   uint32_t storage_[kArraySize] = {0};
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N > 0), int>::type = 0>
-  inline internal::SuperBitPackedArrayEntryMetadata getEntryMetadata(std::size_t entry_index) const
+  inline internal::BitPackedArrayEntryMetadata getEntryMetadata(std::size_t entry_index) const
   {
     const std::size_t bit_address = (entry_index * 32) - (entry_index * kExtraBitsPerEntry);
     const std::size_t start_index = bit_address / 32;
@@ -41,7 +41,7 @@ class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
   }
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N > 0), int>::type = 0>
-  inline uint32_t getEntry(const internal::SuperBitPackedArrayEntryMetadata &metadata) const
+  inline uint32_t getEntry(const internal::BitPackedArrayEntryMetadata &metadata) const
   {
     if (metadata.bit_shift + BitsPerEntry > 32)
     {
@@ -61,7 +61,7 @@ class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
   }
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N > 0), int>::type = 0>
-  inline void setEntry(const internal::SuperBitPackedArrayEntryMetadata &metadata, uint32_t entry)
+  inline void setEntry(const internal::BitPackedArrayEntryMetadata &metadata, uint32_t entry)
   {
     if (metadata.bit_shift + BitsPerEntry > 32)
     {
@@ -75,7 +75,7 @@ class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
 
       // Store new value
       this->storage_[metadata.start_index] |= ((entry << bits_in_2nd_entry) & kEntryBitMask)
-                                              << 32 - bits_in_1st_entry - bits_in_2nd_entry;
+                                              << 32 - BitsPerEntry;
       this->storage_[metadata.start_index + 1] |= entry >> bits_in_1st_entry;
 
       return;
@@ -86,7 +86,7 @@ class SuperBitPackedEntryBuffer : private PackedArray<NumberOfEntries>
   };
 
 public:
-  SuperBitPackedEntryBuffer() = default;
+  BitPackedEntryBuffer() = default;
 
   template <int N = kExtraBitsPerEntry, typename std::enable_if<(N == 0), int>::type = 0>
   inline uint32_t get(std::size_t entry_index) const

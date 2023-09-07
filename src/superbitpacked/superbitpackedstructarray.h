@@ -5,8 +5,8 @@
 
 #include "../base/packedarray.h"
 #include "../subbitpacked/subbitpackedstruct.h"
+#include "../utils/bitpackedentrybuffer.h"
 #include "../utils/packedstate.h"
-#include "../utils/superbitpackedentrybuffer.h"
 
 namespace kt
 {
@@ -17,7 +17,7 @@ class SuperBitPackedStructArray : public PackedStructArray<NumStructs>
   static constexpr uint8_t kExtraBitsPerWord = 32 - kBitsPerEntry;
   static constexpr uint32_t kEntryBitMask = compiletime::Pow<2>(kBitsPerEntry) - 1;
 
-  SuperBitPackedEntryBuffer<kBitsPerEntry, NumStructs> buffer_{};
+  BitPackedEntryBuffer<kBitsPerEntry, NumStructs> buffer_{};
 
 public:
   struct Iterator;
