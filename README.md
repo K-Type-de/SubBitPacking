@@ -32,17 +32,21 @@
     - [Getting The Actual Amount Of Used Memory In Bytes](#getting-the-actual-amount-of-used-memory-in-bytes)
   - [SubBitPackedStruct](#subbitpackedstruct)
   - [Exceptions](#exceptions)
+- [Benchmark](#benchmark)
 
 ## TL;DR
 
-A C++ library to store state values in a memory efficient way using sub-bit compression.
+This C++ library is designed to efficiently store state values, essentially unsigned integers with a limited value range, by using sub-bit packing. It offers random read/write access to all elements in constant time.
 
 ## Summary
 
-Storing states bitwise can lead to huge amounts of wasted memory. This library aims to save memory by packing values arithmetically. [This table](#space-saved) lists the amount of saved space when comparing arithmetically packed values and bit-packed values.
-The drawback is a run-time overhead for setting/retrieving the values because calculations need to be done instead of simple addressing.
-Therefore, if the number of states you want to store has no spacial benefit (e.g. powers of 2) you should stick to bitwise packing because of the faster run-time.
-On the other hand, you can fit more values of states that can be tightly packed together on platforms where memory is the limiting factor (e.g. embedded systems) utilizing this library.
+Storing states bitwise can result in significant memory wastage. This C++ library aims to conserve memory by employing arithmetic packing of values while maintaining constant-time read/write access for each element (see [Benchmark](#benchmark)). [This table](#space-saved) provides a comparison of the space saved when comparing arithmetically packed values to bit-packed values.
+
+The trade-off is a runtime overhead for setting/retrieving values due to the necessary calculations instead of simple addressing. Therefore, if the number of states you intend to store doesn't provide a spatial benefit (e.g., powers of 2), it's advisable to stick with bitwise packing for faster runtime performance.
+
+Conversely, this library becomes valuable when you need to pack more tightly on platforms where memory is the limiting factor, such as embedded systems.
+
+It's important to note that this library does not employ compression algorithms or block encoding. It merely packs the uncompressed storage for the elements without relying on the actual values within the data block.
 
 ## The Problem With Storing States
 
@@ -100,7 +104,7 @@ A 32-bit data block ($v$) for values $a_0$ ... $a_{m-1}$ is computed like this:
 $$ v = \sum_{i=0}^{m-1}{a_i \cdot n^{i}} $$
 
 ```math
-\{ \: a_i \in \mathbf{N} _{0} \: \lvert \: 0 \le a_i \lt n \: \}
+\{ \: a_i \in \mathbb{N} _{0} \: \lvert \: 0 \le a_i \lt n \: \}
 ```
 
 Retrieving a value works like this:
@@ -389,3 +393,44 @@ Getting/Setting values can be done by stating the array index for the wanted str
 ## Exceptions
 
 By default this library uses no exceptions. However, you can enable exceptions by setting the compile flag `KT_ENABLE_EXCEPTIONS`. This activates array boundary checks but will also slow down array accesses.
+
+
+# Benchmark
+
+Here are some benchmark numbers:
+
+## Memory Usage
+
+For an array with 50,000 elements, the memory usage for states between 1 and 100 is as shown in the following figure:
+
+![Memory Usage](images/MemoryUsage.svg)
+
+- `bitpacked`: Natively packed states, like those used in bitfields. For example, 3 states can fit into 2 bits and do not occupy 1 byte.
+
+- `subbitpacked`: The same states but packed with our sub-bit algorithm.
+
+- `superbitpacked`: Subbitpacked values that are also bitpacked by shifting consecutive blocks into the leftover bits from the preceding blocks.
+
+## Timing
+
+Time consumption for 10 million reads:
+
+![Timing](images/Timing.svg)
+
+One notable thing is that the read iterator has quite good performance because it doesn't need to calculate the location where the bits are stored but can simply move within a stream of values.
+
+
+# To Do
+
+## Optimization
+
+Currently, there has been minimal manual code optimization, with the exception of the [Compile Time Calculations](#compile-time-calculations) for required power-lookup-tables and sizes.
+
+## Iterators
+
+Currently, there is only a read-iterator available for the `subbitpackedarray`. Our plan is to implement both read and write iterators for all array implementations.
+
+## Struct Named Field Accessors
+
+To provide a more user-friendly way to access struct members, we are planning to introduce named field accessors in addition to indexed access.
+
