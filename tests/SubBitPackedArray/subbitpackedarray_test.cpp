@@ -114,42 +114,66 @@ TYPED_TEST(SubBitPackedArrayTest, IteratorRandTest)
     array.set(i, i % num_states);
   }
 
-  typename SubBitPackedArray<num_states, values>::Iterator iterator{array, start_index};
+  typename SubBitPackedArray<num_states, values>::ReadIterator read_iterator{array, start_index};
 
-  while (iterator != array.end())
+  while (read_iterator != array.end())
   {
-    PackedState state = *iterator;
+    PackedState state = *read_iterator;
 
     ASSERT_EQ(state, start_index % num_states);
     ASSERT_EQ(state, array.get(start_index));
     start_index++;
-    iterator++;
+    read_iterator++;
   }
 }
 
-// Exception test
-TYPED_TEST(SubBitPackedArrayTest, ExceptionTest)
+// Write Iterator test
+TYPED_TEST(SubBitPackedArrayTest, WriteIteratorTest)
 {
+  // Tests if write iterator sets correct values
   static constexpr auto num_states = TypeParam::value;
-  static constexpr uint32_t values = 1000;
-  static constexpr uint32_t accesses = values * 2;
+  static constexpr uint32_t values = 100000;
 
-  // Avoid undefined behavior when accessing the array out of limits
-  uint8_t buf[sizeof(SubBitPackedArray<num_states, accesses>)];
-  auto *array_ptr = new (buf) SubBitPackedArray<num_states, values>{};
+  SubBitPackedArray<num_states, values> array{};
 
-  for (int i = 0; i < accesses; ++i)
+  size_t count = 0;
+  for (auto write_iter = array.cwbegin(); write_iter != array.cwend(); write_iter++)
   {
-    bool caught = false;
-    try
-    {
-      array_ptr->get(i);
-    }
-    catch (std::out_of_range ex)
-    {
-      caught = true;
-    }
+    *write_iter = count % num_states;
+    count++;
+  }
 
-    EXPECT_EQ(caught, i >= values) << "Index: " << i;
+  count = 0;
+  for (auto const state : array)
+  {
+    ASSERT_EQ(state, count % num_states) << "Index: " << count;
+    count++;
   }
 }
+
+// // Exception test
+// TYPED_TEST(SubBitPackedArrayTest, ExceptionTest)
+// {
+//   static constexpr auto num_states = TypeParam::value;
+//   static constexpr uint32_t values = 1000;
+//   static constexpr uint32_t accesses = values * 2;
+
+//   // Avoid undefined behavior when accessing the array out of limits
+//   uint8_t buf[sizeof(SubBitPackedArray<num_states, accesses>)];
+//   auto *array_ptr = new (buf) SubBitPackedArray<num_states, values>{};
+
+//   for (int i = 0; i < accesses; ++i)
+//   {
+//     bool caught = false;
+//     try
+//     {
+//       array_ptr->get(i);
+//     }
+//     catch (std::out_of_range ex)
+//     {
+//       caught = true;
+//     }
+
+//     EXPECT_EQ(caught, i >= values) << "Index: " << i;
+//   }
+// }

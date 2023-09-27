@@ -1,13 +1,13 @@
-#ifndef KT_SUBBITPACKEDARRAY_ITERATOR_H
-#define KT_SUBBITPACKEDARRAY_ITERATOR_H
+#ifndef KT_SUBBITPACKEDARRAY_READ_ITERATOR_H
+#define KT_SUBBITPACKEDARRAY_READ_ITERATOR_H
 
 template <uint16_t NumStates, std::size_t NumValues>
-struct kt::SubBitPackedArray<NumStates, NumValues>::Iterator
+struct kt::SubBitPackedArray<NumStates, NumValues>::ReadIterator
 {
   using iterator_category = std::forward_iterator_tag;
   using value_type = PackedState;
 
-  Iterator(SubBitPackedArray& instance, uint32_t value_index)
+  ReadIterator(const SubBitPackedArray& instance, uint32_t value_index)
       : instance_{instance},
         entry_index_{value_index / kStatesPer4ByteWord},
         chunk_value_index_{static_cast<uint8_t>(value_index % kStatesPer4ByteWord)}
@@ -33,7 +33,7 @@ struct kt::SubBitPackedArray<NumStates, NumValues>::Iterator
   {
     return *this;
   }
-  Iterator& operator++()
+  ReadIterator& operator++()
   {
     chunk_value_index_++;
     if (chunk_value_index_ == kStatesPer4ByteWord)
@@ -48,29 +48,29 @@ struct kt::SubBitPackedArray<NumStates, NumValues>::Iterator
     }
     return *this;
   }
-  Iterator operator++(int)
+  ReadIterator operator++(int)
   {
-    Iterator tmp = *this;
+    ReadIterator tmp = *this;
     ++(*this);
     return tmp;
   }
-  friend bool operator==(const Iterator& a, const Iterator& b)
+  friend bool operator==(const ReadIterator& a, const ReadIterator& b)
   {
     return a.entry_index_ == b.entry_index_ && a.chunk_value_index_ == b.chunk_value_index_ &&
            &a.instance_ == &b.instance_;
   }
 
-  friend bool operator!=(const Iterator& a, const Iterator& b)
+  friend bool operator!=(const ReadIterator& a, const ReadIterator& b)
   {
     return a.entry_index_ != b.entry_index_ || a.chunk_value_index_ != b.chunk_value_index_ ||
            &a.instance_ != &b.instance_;
   }
 
 private:
-  SubBitPackedArray& instance_;
+  const SubBitPackedArray& instance_;
   uint32_t entry_index_;
   uint32_t chunk_;
   uint8_t chunk_value_index_;
 };
 
-#endif  // KT_SUBBITPACKEDARRAY_ITERATOR_H
+#endif  // KT_SUBBITPACKEDARRAY_READ_ITERATOR_H

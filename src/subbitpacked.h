@@ -2,7 +2,6 @@
 #define KT_SUBBITPACKED_H
 
 #include "subbitpacked/subbitpackedarray.h"
-#include "subbitpacked/subbitpackedarrayiterator.h"
 #include "subbitpacked/subbitpackedstruct.h"
 #include "subbitpacked/subbitpackedstructarray.h"
 

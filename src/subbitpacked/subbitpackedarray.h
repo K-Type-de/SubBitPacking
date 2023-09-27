@@ -27,15 +27,29 @@ private:
 
   uint32_t entries_[kEntrySize] = {0};
 
+  struct CleanWriteIterator;
+
 public:
-  struct Iterator;
-  Iterator begin()
+  struct ReadIterator;
+  ReadIterator begin() const
   {
-    return Iterator(*this, 0);
+    return ReadIterator(*this, 0);
   }
-  Iterator end()
+  ReadIterator end() const
   {
-    return Iterator(*this, NumValues);
+    return ReadIterator(*this, NumValues);
+  }
+
+  CleanWriteIterator cwbegin()
+  {
+    // Entry buffer has to be empty for efficient writing
+    memset(this->entries_, 0, sizeof(this->entries_));
+    return CleanWriteIterator(*this, 0);
+  }
+
+  CleanWriteIterator cwend()
+  {
+    return CleanWriteIterator(*this, NumValues);
   }
 
   SubBitPackedArray() = default;
@@ -78,7 +92,8 @@ template <uint16_t NumStates, std::size_t NumValues>
 constexpr std::array<uint32_t, SubBitPackedArray<NumStates, NumValues>::kStatesPer4ByteWord>
     SubBitPackedArray<NumStates, NumValues>::kPowerLookupTable;
 
-#include "subbitpackedarrayiterator.h"
+#include "subbitpackedarraycleanwriteiterator.h"
+#include "subbitpackedarrayreaditerator.h"
 
 }  // namespace kt
 
